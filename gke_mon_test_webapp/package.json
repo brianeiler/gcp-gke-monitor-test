@@ -1,5 +1,5 @@
 {
-  "name": "gke_mon_test_webapp",
+  "name": "test_webapp",
   "version": "0.1.0",
   "description": "Web UI to test Stackdriver monitoring in GKE",
   "author": "Brian Eiler <brianeiler@gmail.com>",
@@ -9,5 +9,6 @@
   },
   "dependencies": {
     "express": "^4.17.1"
-  }
+  },
+  "license": "ISC"
 }
