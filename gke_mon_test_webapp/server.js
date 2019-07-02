@@ -25,10 +25,12 @@ router.get('/',function(req,res){
 //   res.sendFile(path.join(__dirname+'/sitemap.html'));
 // });
 
-//add the router
-app.use('/', router);
+
 //app.listen(process.env.port || 3000);
 
+//set scripts folder to JS files
+app.use(express.static(__dirname + '/Script'));//add the router
+app.use('/', router);
 
 
 app.listen(PORT, HOST);
