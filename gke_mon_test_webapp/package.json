@@ -1,0 +1,13 @@
+{
+  "name": "gke_mon_test_webapp",
+  "version": "0.1.0",
+  "description": "Web UI to test Stackdriver monitoring in GKE",
+  "author": "Brian Eiler <brianeiler@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: resource-consumer
+  namespace: default
+  labels:
+    run: resource-consumer
+    k8s-app: resource-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: resource-consumer
+      k8s-app: resource-consumer
+  template:
+    metadata:
+      labels:
+        run: resource-consumer
+        k8s-app: resource-consumer
+    spec:
+      containers:
+      - image: gcr.io/kubernetes-e2e-test-images/resource-consumer:1.4
+        imagePullPolicy: Always
+        name: resource-consumer
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: resource-consumer
+    k8s-app: resource-consumer
+  name: resource-consumer-service
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: resource-consumer
+    k8s-app: resource-consumer
+  type: LoadBalancer
