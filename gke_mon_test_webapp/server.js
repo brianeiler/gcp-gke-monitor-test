@@ -8,7 +8,6 @@ const HOST = '0.0.0.0';
 
 // App
 const app = express();
-
 const path = require('path');
 const router = express.Router();
 
@@ -25,13 +24,16 @@ router.get('/',function(req,res){
 //   res.sendFile(path.join(__dirname+'/sitemap.html'));
 // });
 
-
-//app.listen(process.env.port || 3000);
-
-//set scripts folder to JS files
-app.use(express.static(__dirname + '/Script'));
 //add the router
+// app.use(express.static(__dirname + '/View'));
+//Store all HTML files in view folder.
+app.use("/Scripts", express.static(__dirname + '/Scripts'));
+//Store all JS and CSS in Scripts folder.
+
 app.use('/', router);
+// app.listen(process.env.port || 3000);
+
+// console.log('Running at Port 3000');
 
 
 app.listen(PORT, HOST);
