@@ -6,23 +6,27 @@ var loaded = function()
 	loadButton = document.getElementById("loadButton");	
 
 	loadButton.onclick = function(){
- 	loadJSON(function(json) {
-  			console.log(json); // this will log out the json object
-  			data = json;
-  			console.log(data.isRunning)
 
-  			if(data.isRunning)
-  			{
-  				//Do things because we're already running
-  				DoWhileRunning();
-  			}
-  			else
-  			{
-  				//Launch things
-  				StartRunning();
-  			}
-		});
-	};
+	if(data == null)
+	{
+	 	loadJSON(function(json) {
+	  			console.log(json); // this will log out the json object
+	  			data = json;
+	  			console.log(data.isRunning)
+
+	  			if(data.isRunning)
+	  			{
+	  				//Do things because we're already running
+	  				DoWhileRunning();
+	  			}
+	  			else
+	  			{
+	  				//Launch things
+	  				StartRunning();
+	  			}
+			});
+		};
+	}
 }
 
 function loadJSON(callback) {   
