@@ -29,7 +29,8 @@ router.get('/',function(req,res){
 //app.listen(process.env.port || 3000);
 
 //set scripts folder to JS files
-app.use(express.static(__dirname + '/Script'));//add the router
+app.use(express.static(__dirname + '/Script'));
+//add the router
 app.use('/', router);
 
 
