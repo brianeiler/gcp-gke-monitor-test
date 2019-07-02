@@ -1,12 +1,15 @@
+//Init needed vars
 var loadButton = null;
 var data = null;
+var running = false;
 
 var loaded = function()
 {
+	//Grab our loaded vars
 	loadButton = document.getElementById("loadButton");	
-
-	loadButton.onclick = function(){
-
+	toggle = document.getElementById("onOffToggle");	
+	
+	//If our JSON isn't yet loaded, load it
 	if(data == null)
 	{
 	 	loadJSON(function(json) {
@@ -14,20 +17,29 @@ var loaded = function()
 	  			data = json;
 	  			console.log(data.isRunning)
 
-	  			if(data.isRunning)
-	  			{
-	  				//Do things because we're already running
-	  				DoWhileRunning();
-	  			}
-	  			else
-	  			{
-	  				//Launch things
-	  				StartRunning();
-	  			}
-			});
-		};
+		});
+	};
+
+	//Add funcitonality to the generate load button
+	loadButton.onclick = function(){
+	  	running = data.isRunning;		
+	  	if(data.isRunning)
+	  	{
+			//Do things because we're already running
+			DoWhileRunning();
+			toggle.checked = true;
+			loadButton.disabled = true;
+		}
+		else
+		{
+			//Launch things
+			StartRunning();
+			toggle.checked = true;
+			loadButton.disabled = true;
+		}
 	}
 }
+
 
 function loadJSON(callback) {   
   var xobj = new XMLHttpRequest();
@@ -41,12 +53,22 @@ function loadJSON(callback) {
   xobj.send(null);  
 }
 
+//TODO: While running, check to see if we have stopped running
 var DoWhileRunning = function()
+{
+	while(running)
+	{
+		//TODO create a break case
+	}
+}
+
+//Begin the running process
+var StartRunning = function()
 {
 
 }
 
-var StartRunning = function()
+var StopRunning = function()
 {
-
+	
 }
