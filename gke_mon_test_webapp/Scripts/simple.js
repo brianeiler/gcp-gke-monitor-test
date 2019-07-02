@@ -9,12 +9,23 @@ var loaded = function()
 	loadButton = document.getElementById("loadButton");	
 
 	loadButton.onclick = function(){
- 	var data = JSON.parse(data);
-	console.log(data);
-};
+ 	loadJSON(function(json) {
+  			console.log(json); // this will log out the json object
+		});
+	};
 }
 
-
+function loadJSON(callback) {   
+  var xobj = new XMLHttpRequest();
+  xobj.overrideMimeType("application/json");
+  xobj.open('GET', './Scripts/data.json', true);
+  xobj.onreadystatechange = function () {
+    if (xobj.readyState == 4 && xobj.status == "200") {
+      callback(JSON.parse(xobj.responseText));
+    }
+  };
+  xobj.send(null);  
+}
 
 var myFunc = function() 
 {
