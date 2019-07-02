@@ -1,8 +1,5 @@
-
-
-
 var loadButton = null;
-
+var data = null;
 
 var loaded = function()
 {
@@ -11,6 +8,19 @@ var loaded = function()
 	loadButton.onclick = function(){
  	loadJSON(function(json) {
   			console.log(json); // this will log out the json object
+  			data = json;
+  			console.log(data.isRunning)
+
+  			if(data.isRunning)
+  			{
+  				//Do things because we're already running
+  				DoWhileRunning();
+  			}
+  			else
+  			{
+  				//Launch things
+  				StartRunning();
+  			}
 		});
 	};
 }
@@ -27,9 +37,12 @@ function loadJSON(callback) {
   xobj.send(null);  
 }
 
-var myFunc = function() 
+var DoWhileRunning = function()
 {
-  myButton.style.background='#FF0000';
+
 }
 
-var myFunc2= function(){window.open( "http://www.google.com" )}
+var StartRunning = function()
+{
+
+}
