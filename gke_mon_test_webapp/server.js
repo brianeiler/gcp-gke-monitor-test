@@ -1,8 +1,11 @@
 'use strict';
 
-var data = require( './Scripts/data.json');
+var dataFilePath = './Scripts/data.json'
+var JSONData = require( dataFilePath);
 var http = require('http');
 var fs = require('fs');
+var bodyParser = require('body-parser');
+
 
 function getJson(req, res, next){
     res.send(data);
@@ -42,12 +45,24 @@ app.use("/Scripts", express.static(__dirname + '/Scripts'));
 app.use('/', router);
 // app.listen(process.env.port || 3000);
 
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // console.log('Running at Port 3000');
 app.post('/CPU_On', function(req, res) {
   console.log(req.body);
+  var isRunning = req.body.isRunning;
+  console.log(isRunning);
+  JSONData.isRunning = isRunning;
+  fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
   res.sendStatus(200);
 });
 
+
+var errorHandler = function()
+{
+	//TODO
+}
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);

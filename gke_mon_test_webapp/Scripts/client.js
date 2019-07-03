@@ -1,9 +1,7 @@
 
-
 var loadButton = null;
 var data = null;
 var running = false;
-
 var loaded = function()
 {
 	//Grab our loaded vars
@@ -17,21 +15,25 @@ var loaded = function()
 	  			console.log(json); // this will log out the json object
 	  			data = json;
 	  			console.log(data.isRunning)
-
+	  			running = (data.isRunning == 'true' || data.isRunning == true) ? true : false ;
 		});
-	};
+	}
+	else
+	{
+		running = (data.isRunning == 'true' || data.isRunning == true) ? true : false ;
+	}
 
-	//Add funcitonality to the generate load button
-	loadButton.onclick = function(){
-	  	running = data.isRunning;		
-	  	if(data.isRunning)
+	if(running)
 	  	{
-			//Do things because we're already running
-			DoWhileRunning();
+			
 			toggle.checked = true;
 			loadButton.disabled = true;
+			DoWhileRunning();
 		}
-		else
+	//Add funcitonality to the generate load button
+	loadButton.onclick = function(){
+	  			
+		if(!running && data != null)
 		{
 			//Launch things
 			StartRunning();
@@ -58,11 +60,6 @@ function loadJSON(callback) {
 //TODO: While running, check to see if we have stopped running
 var DoWhileRunning = function()
 {
-	while(running)
-	{
-		//TODO create a break case
-	}
-
 	//tempCode
 	setTimeout(1000, StopRunning)
 }
@@ -81,6 +78,7 @@ var StopRunning = function()
 	loadButton.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
+	PostFunction(data);	
 }
 
 var PostFunction = function(myData)
