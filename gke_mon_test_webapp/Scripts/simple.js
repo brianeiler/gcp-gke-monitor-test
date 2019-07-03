@@ -5,6 +5,7 @@ var domready = require("domready");
 var loadButton = null;
 var data = null;
 var running = false;
+var filePath = "/Scripts/data.json";
 
 domready(function () {
     // exports.something =  whatever you want loaded();
@@ -102,7 +103,9 @@ var StartRunning = function()
 {
 	data.isRunning = true;
 	JSON.stringify(data);
-	sendJSON(data)
+	// sendJSON(data)
+
+	fs.writeFile(filePath, data)
 }
 
 var StopRunning = function()
@@ -111,5 +114,6 @@ var StopRunning = function()
 	loadButton.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
-	sendJSON(data)
+	// sendJSON(data)
+	fs.writeFile(filePath, data)
 }

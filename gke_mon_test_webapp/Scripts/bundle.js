@@ -6812,6 +6812,7 @@ var domready = require("domready");
 var loadButton = null;
 var data = null;
 var running = false;
+var filePath = "/Scripts/data.json";
 
 domready(function () {
     // exports.something =  whatever you want loaded();
@@ -6909,7 +6910,9 @@ var StartRunning = function()
 {
 	data.isRunning = true;
 	JSON.stringify(data);
-	fs.writeFile('data.json', data, 'utf8', callback);
+	// sendJSON(data)
+
+	fs.writeFile(filePath, data)
 }
 
 var StopRunning = function()
@@ -6918,14 +6921,10 @@ var StopRunning = function()
 	loadButton.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
-	fs.writeFile('data.json', data, 'utf8', callback);
+	// sendJSON(data)
+	fs.writeFile(filePath, data)
 }
 
-var callback = function(err)
-{
-  if (err) throw err;
-  console.log('Replaced!');
-}
 },{"browserify-fs":39,"domready":45}],35:[function(require,module,exports){
 (function (process){
 /* Copyright (c) 2013 Rod Vagg, MIT License */
