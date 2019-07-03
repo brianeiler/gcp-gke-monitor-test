@@ -1,5 +1,13 @@
 'use strict';
 
+var data = require( './Scripts/data.json');
+var http = require('http');
+var fs = require('fs');
+
+function getJson(req, res, next){
+    res.send(data);
+}
+
 const express = require('express');
 
 // Constants
@@ -10,6 +18,7 @@ const HOST = '0.0.0.0';
 const app = express();
 const path = require('path');
 const router = express.Router();
+var server = http.createServer(app);
 
 router.get('/',function(req,res){
   res.sendFile(path.join(__dirname+'/index.html'));
@@ -34,6 +43,10 @@ app.use('/', router);
 // app.listen(process.env.port || 3000);
 
 // console.log('Running at Port 3000');
+app.post('/CPU_On', function(req, res) {
+  console.log(req.body);
+  res.sendStatus(200);
+});
 
 
 app.listen(PORT, HOST);

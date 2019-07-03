@@ -1,11 +1,8 @@
-//Init needed vars
-// var server = require('server.js');
+
 
 var loadButton = null;
 var data = null;
 var running = false;
-
-
 
 var loaded = function()
 {
@@ -58,28 +55,6 @@ function loadJSON(callback) {
 }
 
 
-// async function sendJSON(data) {   
-//   var xobj = new XMLHttpRequest();
-//   xobj.overrideMimeType("application/json");
-//   xobj.open('POST', 'http://${HOST}:${PORT}');
-//   xobj.send(data);  
-
-//    return await new Promise((res, rej) => {
-//         xhr.onreadystatechange = () => {
-//           if(xhr.readyState === 4){
-//             if(xhr.status !== 200)
-//               return rej(xhr.status);
-
-//             switch(mode){
-//               case 0: res(xhr.responseText); break;             // Plain text
-//               case 1: res(JSON.parse(xhr.responseText)); break; // JSON
-//               case 2: res(new Uint8Array(xhr.response)); break; // Binary
-//             }
-//           };
-//       };
-//   });
-// }
-
 //TODO: While running, check to see if we have stopped running
 var DoWhileRunning = function()
 {
@@ -97,8 +72,7 @@ var StartRunning = function()
 {
 	data.isRunning = true;
 	JSON.stringify(data);
-	// sendJSON(data)
-	// writeToFile(data);
+	PostFunction(data);
 }
 
 var StopRunning = function()
@@ -107,15 +81,12 @@ var StopRunning = function()
 	loadButton.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
-	// sendJSON(data)
-	// writeToFile(data)
 }
 
-// var writeToFile = function()
-// {
-// 	fs.writeFile(filePath, data, function() {
-//         fs.readFile(filePath, 'utf-8', function(err, errdata) {
-//             console.log(errdata);
-//         });
-//     });
-// }
+var PostFunction = function(myData)
+{
+	const url = "http://localhost:8080/CPU_On";
+	$.post(url, myData, function(dataBack, status){
+		console.log(dataBack)
+	}, 'json');
+}
