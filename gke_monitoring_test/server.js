@@ -14,6 +14,7 @@ var dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
 
 // Google Stackdriver Monitoring initialization
+const {google} = require('googleapis');
 const monitoring = require('@google-cloud/monitoring');
 const client = new monitoring.MetricServiceClient();
 
@@ -125,6 +126,10 @@ app.post('/SendLogInformational', function(req, res) {
 	console.log('This is an INFORMATIONAL log entry');
 });
 
+app.post('/CreateMetric', function(req, res) {
+	createStackdriverMetricDescriptor();
+	res.redirect("/");
+});
 
 
 // --------------------------------------------------------------------------------------
@@ -160,6 +165,10 @@ function metricExport() {
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
+async function getMetadata() {
+	// Get the project information from GCP
+	const projectId = await google.auth.getProjectId()
+}
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
 	// The descriptor is only created once.
