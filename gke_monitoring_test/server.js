@@ -147,11 +147,13 @@ async function cpuEventLoop() {
 	return answer;
 }
 
+setInterval(metricExport, 60000);
+
 function metricExport() {
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
-setInterval(metricExport, 60000);
+
 
 
 // --------------------------------------------------------------------------------------
