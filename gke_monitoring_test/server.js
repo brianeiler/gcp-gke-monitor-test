@@ -25,30 +25,17 @@ var server = http.createServer(app);
 
 router.get('/',function(req,res){
   res.sendFile(path.join(__dirname+'/index.html'));
-  //__dirname : It will resolve to your project folder.
 });
 
-// router.get('/about',function(req,res){
-//   res.sendFile(path.join(__dirname+'/about.html'));
-// });
-
-// router.get('/sitemap',function(req,res){
-//   res.sendFile(path.join(__dirname+'/sitemap.html'));
-// });
-
-//add the router
-// app.use(express.static(__dirname + '/View'));
-//Store all HTML files in view folder.
+// Add the router
+// Store all JS and CSS in Scripts folder.
 app.use("/scripts", express.static(__dirname + '/scripts'));
-//Store all JS and CSS in Scripts folder.
 
 app.use('/', router);
-// app.listen(process.env.port || 3000);
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// console.log('Running at Port 3000');
+
 app.post('/CPU_On', function(req, res) {
   console.log(req.body);
   var isRunning = req.body.isRunning;
