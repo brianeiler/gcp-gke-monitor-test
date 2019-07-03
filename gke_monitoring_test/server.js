@@ -15,6 +15,16 @@ require(__dirname+"/backend.js");
 //
 var dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
+
+// Initialize the JSON file to false and 0 users
+var cpuLoadRunning = false;
+var userCount = 0;
+JSONData.CpuIsRunning = cpuLoadRunning;
+JSONData.UserCount = userCount;
+setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
+
+
+
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
@@ -50,30 +60,33 @@ app.use(bodyParser.json());
 // --------------------------------------------------------------------------------------
 //
 app.post('/StartCPU', function(req, res) {
-	JSONData.CpuIsRunning = true;
+	cpuLoadRunning = true;
+	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log("CPU load started");
+	cpuEventLoop();
+	console.log('CPU load started');
 });
 
 app.post('/StopCPU', function(req, res) {
-	JSONData.CpuIsRunning = false;
+	cpuLoadRunning = false;
+	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log("CPU load stopped");
+	console.log('CPU load stopped');
 });
 
 app.post('/IncreaseUsers', function(req, res) {
-	var userCount = JSONData.UserCount
+	userCount = JSONData.UserCount
 	userCount = userCount + 1
 	JSONData.UserCount = userCount;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log("User Count now: " & userCount);
+	console.log('User Count now: ' + userCount);
 });
 
-app.post('/DeceaseUsers', function(req, res) {
-	var userCount = JSONData.UserCount
+app.post('/DecreaseUsers', function(req, res) {
+	userCount = JSONData.UserCount
 	if (userCount > 0) {
 		userCount = userCount - 1
 		JSONData.UserCount = userCount;
@@ -83,62 +96,63 @@ app.post('/DeceaseUsers', function(req, res) {
 	else {
 		userCount = 0;
 	}
-	console.log("User Count now: " & userCount);
+	console.log('User Count now: ' + userCount);
 });
 
 app.post('/SendLogCritical', function(req, res) {
 	res.redirect("/");
-	console.log("This is a CRITICAL log entry");
+	console.log('This is a CRITICAL log entry');
 });
 
 app.post('/SendLogError', function(req, res) {
 	res.redirect("/");
-	console.log("This is an ERROR log entry");
+	console.log('This is an ERROR log entry');
 });
 
 app.post('/SendLogWarning', function(req, res) {
 	res.redirect("/");
-	console.log("This is a WARNING log entry");
+	console.log('This is a WARNING log entry');
 });
 
 app.post('/SendLogInformational', function(req, res) {
 	res.redirect("/");
-	console.log("This is an INFORMATIONAL log entry");
+	console.log('This is an INFORMATIONAL log entry');
 });
 
 
+
 // --------------------------------------------------------------------------------------
-// SECTION: Function calls
-// Code to perform the core mechanics of the application
+// SECTION: Main Functions
+// Code that performs the core application functions
 // --------------------------------------------------------------------------------------
 //
-var DoWhileRunning = function() {
-	while(running)
-	{
-		//TODO create a break case
+
+function initData() {
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+}
+
+function sleep(ms){
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
+    })
+}
+
+async function cpuEventLoop() {
+	var answer = 0;
+	while (cpuLoadRunning) {
+		for (var i = 0; i < 10000000; i++) {
+			answer += Math.random() * Math.random();
+		}
+		await sleep(1);
 	}
-
-	//tempCode
-	setTimeout(1000, StopRunning)
+	return answer; // Code that runs the CPU load
 }
 
-//Begin the running process
-var StartRunning = function() {
-	data.CpuIsRunning = true;
-	JSON.stringify(data);
-	// sendJSON(data)
-	// writeToFile(data);
+function metricExport() {
+	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
-var StopRunning = function() {
-	toggle.checked = false;
-	btnCpuStart.disabled = false;
-	data.CpuIsRunning = false;
-	JSON.stringify(data);
-	// sendJSON(data)
-	// writeToFile(data)
-}
-
+setInterval(metricExport, 60000);
 
 
 // --------------------------------------------------------------------------------------
@@ -151,7 +165,7 @@ var errorHandler = function() {
 }
 
 app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+console.log(`Web server started. Running on http://${HOST}:${PORT}`);
 
 
 
