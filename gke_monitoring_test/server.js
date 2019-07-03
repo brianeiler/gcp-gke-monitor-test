@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 "use strict";
-require('./scripts/binaryTree.js')();
 var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
@@ -71,8 +70,7 @@ app.post('/StartCPU', function(req, res) {
 	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	// cpuEventLoop();
-	CheckTree(9999999999999999999999999);
+	cpuEventLoop();
 	console.log('CPU load started');
 });
 
