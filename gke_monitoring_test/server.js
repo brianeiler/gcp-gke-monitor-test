@@ -5,7 +5,6 @@
 var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
-require(__dirname+"/backend.js");
 
 
 // --------------------------------------------------------------------------------------
@@ -145,7 +144,7 @@ async function cpuEventLoop() {
 		}
 		await sleep(1);
 	}
-	return answer; // Code that runs the CPU load
+	return answer;
 }
 
 function metricExport() {
@@ -174,7 +173,3 @@ console.log(`Web server started. Running on http://${HOST}:${PORT}`);
 // All code below this point is not called and should be disposable
 // --------------------------------------------------------------------------------------
 //
-
-// function getJson(req, res, next){
-//     res.send(data);
-// }
