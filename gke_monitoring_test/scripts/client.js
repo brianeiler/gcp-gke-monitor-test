@@ -2,15 +2,15 @@
 var btnCpuStart = null;
 var data = null;
 var running = false;
-var loaded = function()
-{
+
+var loaded = function() {
 	//Grab our loaded vars
-	btnCpuStart = document.getElementById("btnCpuStart");	
-	toggle = document.getElementById("onOffToggle");	
+	btnCpuStart = document.getElementById("btnCpuStart");
+	btnCpuStop = document.getElementById("btnCpuStop");
 	
 	//If our JSON isn't yet loaded, load it
 	if(data == null)
-	{
+		{
 	 	loadJSON(function(json) {
 	  			console.log(json); // this will log out the json object
 	  			data = json;
@@ -18,24 +18,20 @@ var loaded = function()
 	  			running = (data.isRunning == "true" || data.isRunning == true) ? true : false ;
 
 	  			console.log(running);
-	if(running)
-	  	{
-			
-			toggle.checked = true;
+		if(running)
+		  	{
 			btnCpuStart.disabled = true;
 			DoWhileRunning();
-		}
+			}
 	else
-	{
+		{
 		toggle.checked = false;
 		btnCpuStart.disabled = false;
-			//Add funcitonality to the generate load button
-	assignLoadButton();
-	}
-
+		//Add funcitonality to the generate load button
+		assignLoadButton();
+		}
 		});
 	}
-
 }
 
 
@@ -52,12 +48,13 @@ function loadJSON(callback) {
 }
 
 
-//TODO: While running, check to see if we have stopped running
-var DoWhileRunning = function()
-{
-	//tempCode
-	setTimeout(StopRunning, 1000);
-}
+// TODO: While running, check to see if we have stopped running
+// var DoWhileRunning = function()
+// {
+// 	tempCode
+// 	setTimeout(StopRunning, 1000);
+// }
+
 
 //Begin the running process
 var StartRunning = function()
@@ -65,18 +62,17 @@ var StartRunning = function()
 	data.isRunning = true;
 	JSON.stringify(data);
 	PostFunction(data);
-	DoWhileRunning();
+	// DoWhileRunning();
 }
 
 var StopRunning = function()
 {
-	toggle.checked = false;
 	btnCpuStart.disabled = false;
+	btnCpuStop.disabled = true;
 	data.isRunning = false;
 	JSON.stringify(data);
 	PostFunction(data);
-	assignLoadButton();
-
+	assignLoadButton();		// <--- Why is this running again?
 }
 
 var assignLoadButton = function() 
