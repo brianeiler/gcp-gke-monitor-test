@@ -20,9 +20,9 @@ const request = {
     unit: '{users}',
     labels: [
       {
-        key: 'store_id',
+        key: 'pod_id',
         valueType: 'STRING',
-        description: 'The ID of the store.',
+        description: 'The ID of the pod.',
       },
     ],
   },
@@ -43,6 +43,11 @@ descriptor.labels.forEach(label => {
 });
 
 
+=====================================================================================
+// This section is for writing the data to Stackdriver
+// Input: 
+//		pod_guid (string) the label on the timeSeriesData
+//		num_users (INT64) the value of the dataPoint
 
 // Imports the Google Cloud client library
 const monitoring = require('@google-cloud/monitoring');
@@ -50,9 +55,7 @@ const monitoring = require('@google-cloud/monitoring');
 // Creates a client
 const client = new monitoring.MetricServiceClient();
 
-/**
- * TODO(developer): Uncomment and edit the following lines of code.
- */
+
 // const projectId = 'YOUR_PROJECT_ID';
 
 const dataPoint = {
@@ -62,15 +65,15 @@ const dataPoint = {
     },
   },
   value: {
-    doubleValue: 123.45,
+    doubleValue: num_users,
   },
 };
 
 const timeSeriesData = {
   metric: {
-    type: 'custom.googleapis.com/stores/daily_sales',
+    type: 'custom.googleapis.com/webapp/pod_id',
     labels: {
-      store_id: 'Pittsburgh',
+      pod_id: pod_guid,
     },
   },
   resource: {
