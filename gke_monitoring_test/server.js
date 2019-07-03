@@ -162,7 +162,7 @@ function metricExport() {
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
-function createStackdriverMetricDescriptor() {
+async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
 	// The descriptor is only created once.
 
@@ -190,7 +190,7 @@ function createStackdriverMetricDescriptor() {
 	console.log('Created custom Metric:\n');
 }
 
-function writeStackdriverMetricData() {
+async function writeStackdriverMetricData() {
 	// This section is for writing the data to Stackdriver
 	// This code is executed once every minute to publish the value of the custom metric
 	//
