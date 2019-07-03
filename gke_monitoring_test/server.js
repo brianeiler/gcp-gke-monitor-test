@@ -6,7 +6,6 @@ var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 
-
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
 // This code sets configuration values and retrieves the server state from a JSON file
@@ -14,6 +13,10 @@ var bodyParser = require('body-parser');
 //
 var dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
+
+// Google Stackdriver Monitoring initialization
+const monitoring = require('@google-cloud/monitoring');
+const client = new monitoring.MetricServiceClient();
 
 // Initialize the JSON file to false and 0 users
 var cpuLoadRunning = false;
@@ -23,9 +26,14 @@ JSONData.UserCount = userCount;
 setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
 
 
-
+// Express Ports
 const PORT = 8080;
 const HOST = '0.0.0.0';
+	
+// GCP Project Information
+const projectId = 'YOUR_PROJECT_ID';
+const pod_guid = 'YOUR_POD_GUID';
+
 
 
 
@@ -153,8 +161,81 @@ function metricExport() {
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
+function createStackdriverMetricDescriptor() {
+	// This function will create the metric descriptor for the timeSeries data
+	// The descriptor is only created once.
 
+	const request = {
+	  name: client.projectPath(projectId),
+	  metricDescriptor: {
+		description: 'Number of active users.',
+		displayName: 'Active Users',
+		type: 'custom.googleapis.com/webapp/active_users',
+		metricKind: 'GAUGE',
+		valueType: 'DOUBLE',
+		unit: '{users}',
+		labels: [
+		  {
+			key: 'pod_id',
+			valueType: 'STRING',
+			description: 'The ID of the pod.',
+		  },
+		],
+	  },
+	};
 
+	// Creates a custom metric descriptor
+	const [descriptor] = await client.createMetricDescriptor(request);
+	console.log('Created custom Metric:\n');
+}
+
+function writeStackdriverMetricData() {
+	// This section is for writing the data to Stackdriver
+	// This code is executed once every minute to publish the value of the custom metric
+	//
+	// This function uses the global variable "userCount" for its value
+	//
+	const dataPoint = {
+	  interval: {
+		endTime: {
+		  seconds: Date.now() / 1000,
+		},
+	  },
+	  value: {
+		doubleValue: userCount,
+	  },
+	};
+
+	const timeSeriesData = {
+	  metric: {
+		type: 'custom.googleapis.com/webapp/active_users',
+		labels: {
+		  pod_id: pod_guid,
+		},
+	  },
+	  resource: {
+		type: 'k8s_pod',
+		labels: {
+		  project_id: 'projectId',
+		  location: 'zone_name',
+		  cluster_name: 'cluster_name',
+		  namespace_name: 'namespace',
+		  pod_name: 'pod_name',
+		},
+	  },
+	  points: [dataPoint],
+	};
+
+	const request = {
+	  name: client.projectPath(projectId),
+	  timeSeries: [timeSeriesData],
+	};
+
+	// Writes time series data
+	const result = await client.createTimeSeries(request);
+	console.log(`Done writing time series data.`, result);
+
+}
 
 // --------------------------------------------------------------------------------------
 // SECTION: Error Handling
