@@ -1,6 +1,6 @@
 'use strict';
 
-var dataFilePath = './Scripts/data.json'
+var dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);
 var http = require('http');
 var fs = require('fs');
@@ -39,7 +39,7 @@ router.get('/',function(req,res){
 //add the router
 // app.use(express.static(__dirname + '/View'));
 //Store all HTML files in view folder.
-app.use("/Scripts", express.static(__dirname + '/Scripts'));
+app.use("/scripts", express.static(__dirname + '/scripts'));
 //Store all JS and CSS in Scripts folder.
 
 app.use('/', router);

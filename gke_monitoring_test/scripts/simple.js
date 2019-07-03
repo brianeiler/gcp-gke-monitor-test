@@ -1,7 +1,7 @@
 //Init needed vars
 // var server = require('server.js');
 
-var loadButton = null;
+var btnCpuStart = null;
 var data = null;
 var running = false;
 
@@ -10,7 +10,7 @@ var running = false;
 var loaded = function()
 {
 	//Grab our loaded vars
-	loadButton = document.getElementById("loadButton");	
+	btnCpuStart = document.getElementById("btnCpuStart");	
 	toggle = document.getElementById("onOffToggle");	
 	
 	//If our JSON isn't yet loaded, load it
@@ -25,21 +25,21 @@ var loaded = function()
 	};
 
 	//Add funcitonality to the generate load button
-	loadButton.onclick = function(){
+	btnCpuStart.onclick = function(){
 	  	running = data.isRunning;		
 	  	if(data.isRunning)
 	  	{
 			//Do things because we're already running
 			DoWhileRunning();
 			toggle.checked = true;
-			loadButton.disabled = true;
+			btnCpuStart.disabled = true;
 		}
 		else
 		{
 			//Launch things
 			StartRunning();
 			toggle.checked = true;
-			loadButton.disabled = true;
+			btnCpuStart.disabled = true;
 		}
 	}
 }
@@ -48,7 +48,7 @@ var loaded = function()
 function loadJSON(callback) {   
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");
-  xobj.open('GET', './Scripts/data.json', true);
+  xobj.open('GET', './scripts/data.json', true);
   xobj.onreadystatechange = function () {
     if (xobj.readyState == 4 && xobj.status == "200") {
       callback(JSON.parse(xobj.responseText));
@@ -104,7 +104,7 @@ var StartRunning = function()
 var StopRunning = function()
 {
 	toggle.checked = false;
-	loadButton.disabled = false;
+	btnCpuStart.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
 	// sendJSON(data)

@@ -1,11 +1,11 @@
 
-var loadButton = null;
+var btnCpuStart = null;
 var data = null;
 var running = false;
 var loaded = function()
 {
 	//Grab our loaded vars
-	loadButton = document.getElementById("loadButton");	
+	btnCpuStart = document.getElementById("btnCpuStart");	
 	toggle = document.getElementById("onOffToggle");	
 	
 	//If our JSON isn't yet loaded, load it
@@ -22,13 +22,13 @@ var loaded = function()
 	  	{
 			
 			toggle.checked = true;
-			loadButton.disabled = true;
+			btnCpuStart.disabled = true;
 			DoWhileRunning();
 		}
 	else
 	{
 		toggle.checked = false;
-		loadButton.disabled = false;
+		btnCpuStart.disabled = false;
 			//Add funcitonality to the generate load button
 	assignLoadButton();
 	}
@@ -42,7 +42,7 @@ var loaded = function()
 function loadJSON(callback) {   
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");
-  xobj.open('GET', './Scripts/data.json', true);
+  xobj.open('GET', './scripts/data.json', true);
   xobj.onreadystatechange = function () {
     if (xobj.readyState == 4 && xobj.status == "200") {
       callback(JSON.parse(xobj.responseText));
@@ -71,7 +71,7 @@ var StartRunning = function()
 var StopRunning = function()
 {
 	toggle.checked = false;
-	loadButton.disabled = false;
+	btnCpuStart.disabled = false;
 	data.isRunning = false;
 	JSON.stringify(data);
 	PostFunction(data);
@@ -82,14 +82,14 @@ var StopRunning = function()
 var assignLoadButton = function() 
 {
 	running = (data.isRunning == "true" || data.isRunning == true) ? true : false ;
-	loadButton.onclick = function(){
+	btnCpuStart.onclick = function(){
 	  			
 		if(!running && data != null)
 		{
 			//Launch things
 			StartRunning();
 			toggle.checked = true;
-			loadButton.disabled = true;
+			btnCpuStart.disabled = true;
 		}
 	}
 }
