@@ -12,12 +12,12 @@ const client = new monitoring.MetricServiceClient();
 const request = {
   name: client.projectPath(projectId),
   metricDescriptor: {
-    description: 'Daily sales records from all branch stores.',
-    displayName: 'Daily Sales',
-    type: 'custom.googleapis.com/stores/daily_sales',
+    description: 'Number of active users.',
+    displayName: 'Active Users',
+    type: 'custom.googleapis.com/webapp/active_users',
     metricKind: 'GAUGE',
     valueType: 'DOUBLE',
-    unit: '{USD}',
+    unit: '{users}',
     labels: [
       {
         key: 'store_id',
@@ -41,3 +41,52 @@ console.log('Labels:');
 descriptor.labels.forEach(label => {
   console.log(`  ${label.key} (${label.valueType}) - ${label.description}`);
 });
+
+
+
+// Imports the Google Cloud client library
+const monitoring = require('@google-cloud/monitoring');
+
+// Creates a client
+const client = new monitoring.MetricServiceClient();
+
+/**
+ * TODO(developer): Uncomment and edit the following lines of code.
+ */
+// const projectId = 'YOUR_PROJECT_ID';
+
+const dataPoint = {
+  interval: {
+    endTime: {
+      seconds: Date.now() / 1000,
+    },
+  },
+  value: {
+    doubleValue: 123.45,
+  },
+};
+
+const timeSeriesData = {
+  metric: {
+    type: 'custom.googleapis.com/stores/daily_sales',
+    labels: {
+      store_id: 'Pittsburgh',
+    },
+  },
+  resource: {
+    type: 'global',
+    labels: {
+      project_id: projectId,
+    },
+  },
+  points: [dataPoint],
+};
+
+const request = {
+  name: client.projectPath(projectId),
+  timeSeries: [timeSeriesData],
+};
+
+// Writes time series data
+const result = await client.createTimeSeries(request);
+console.log(`Done writing time series data.`, result);
