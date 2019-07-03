@@ -8,8 +8,20 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "all": "0.0.0",
+    "bootstrap": "^4.3.1",
     "bootstrap-switch": "^3.4.0",
-    "express": "^4.17.1"
+    "browserify-fs": "^1.0.0",
+    "domready": "^1.0.8",
+    "express": "^4.17.1",
+    "file-system": "^2.2.2",
+    "jquery": "^3.4.1",
+    "popper": "^1.0.1",
+    "requirejs": "^2.3.6",
+    "webpack": "^4.35.2"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "npm-install-webpack-plugin": "^4.0.5"
+  }
 }

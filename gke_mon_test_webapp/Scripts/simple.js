@@ -1,7 +1,16 @@
 //Init needed vars
+var fs = require('browserify-fs');
+var domready = require("domready");
+
 var loadButton = null;
 var data = null;
 var running = false;
+
+domready(function () {
+    // exports.something =  whatever you want loaded();
+    loaded();
+});
+
 
 var loaded = function()
 {
@@ -53,6 +62,29 @@ function loadJSON(callback) {
   xobj.send(null);  
 }
 
+
+async function sendJSON(data) {   
+  var xobj = new XMLHttpRequest();
+  xobj.overrideMimeType("application/json");
+  xobj.open('POST', 'http://${HOST}:${PORT}');
+  xobj.send(data);  
+
+   return await new Promise((res, rej) => {
+        xhr.onreadystatechange = () => {
+          if(xhr.readyState === 4){
+            if(xhr.status !== 200)
+              return rej(xhr.status);
+
+            switch(mode){
+              case 0: res(xhr.responseText); break;             // Plain text
+              case 1: res(JSON.parse(xhr.responseText)); break; // JSON
+              case 2: res(new Uint8Array(xhr.response)); break; // Binary
+            }
+          };
+      };
+  });
+}
+
 //TODO: While running, check to see if we have stopped running
 var DoWhileRunning = function()
 {
@@ -60,15 +92,24 @@ var DoWhileRunning = function()
 	{
 		//TODO create a break case
 	}
+
+	//tempCode
+	setTimeout(1000, StopRunning)
 }
 
 //Begin the running process
 var StartRunning = function()
 {
-
+	data.isRunning = true;
+	JSON.stringify(data);
+	sendJSON(data)
 }
 
 var StopRunning = function()
 {
-	
+	toggle.checked = false;
+	loadButton.disabled = false;
+	data.isRunning = false;
+	JSON.stringify(data);
+	sendJSON(data)
 }
