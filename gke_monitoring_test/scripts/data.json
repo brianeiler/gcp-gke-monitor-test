@@ -1,3 +1,4 @@
 {
-  "isRunning": "false"
+  "CpuIsRunning": true,
+  "CurrentUsers": "0"
 }

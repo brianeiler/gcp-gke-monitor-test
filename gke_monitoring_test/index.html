@@ -12,8 +12,21 @@
 <div style="margin:100px;">
   <div class="jumbotron"  style="padding:40px;">
 	<h1>Generate CPU Load</h1>
-	<p>The Generate CPU Load function will place a load on a single core CPU by performing math operations in a loop. The script relies upon the value that you specify as the Target Utilization percentage to determine how many math operations to perform each second.</p>
+	<p>The Generate CPU Load function will place a load on a single core CPU by performing math operations in a loop.</p>
+<!-- 
+	<p>The script relies upon the value that you specify as the Target Utilization percentage to determine how many math operations to perform each second.</p>
 	<p>For example, if you select 75%, the script will perform math operations for 750ms and then sleep for 250ms before resuming math operations. The script will continue performing these math operations until the Duration timer expires. Alternatively you may abort the process by clicking the Stop button.</p>
+ -->
+
+	<form action="/StartCPU" method="POST">
+		<input type="submit" value="Start CPU Load"/>
+	</form>
+
+	<form action="/StopCPU" method="POST">
+		<input type="submit" value="Stop CPU Load"/>
+	</form>
+
+<!-- 
 	<form>
 	  <div class="form-row">
 		<div class="form-group col-md-2">
@@ -31,6 +44,7 @@
 		</div>
 	  </div>
 	</form>
+ -->
   </div>
 </div>
 
@@ -38,10 +52,23 @@
   <div class="jumbotron"  style="padding:40px;">
 	<h1>Custom Metrics</h1>
 	<p>The Custom Metrics function will increment a counter which is then exposed to Stackdriver Monitoring. In this example, the counter represents the number of active users in an application. You can increase or decrease the number of active users; however the value is only reported to Stackdriver <b> once per minute </b>.</p>
+<!-- 
 	<button id="btnIncreaseUsers" class="btn btn-primary btn-sm" role="button">Increase Users</button>
 	<button id="btnDecreaseUsers" class="btn btn-secondary btn-sm" role="button">Decrease Users</button>
+ -->
+	<form action="/IncreaseUsers" method="POST">
+		<input type="submit" value="Increase Users Counter"/>
+	</form>
+
+	<form action="/DecreaseUsers" method="POST">
+		<input type="submit" value="Decrease Users Counter"/>
+	</form>
+
+<!-- 
 	<br>
-	Currently reporting that X users are connected.
+	Current user count: <span id="lblUserCount" class="label label-info">0</span>
+ -->
+
   </div>
 </div>
 	
@@ -49,6 +76,20 @@
   <div class="jumbotron"  style="padding:40px;">
 	<h1>Log Test</h1>
 	<p>The Log Test function will generate a log message of the type selected, and then send it to the application's standard output device (stdout).</p>
+	<form action="/SendLogCritical" method="POST">
+		<input type="submit" value="Generate Critical Log Entry"/>
+	</form>
+	<form action="/SendLogError" method="POST">
+		<input type="submit" value="Generate Error Log Entry"/>
+	</form>
+	<form action="/SendLogWarning" method="POST">
+		<input type="submit" value="Generate Warning Log Entry"/>
+	</form>
+	<form action="/SendLogInformational" method="POST">
+		<input type="submit" value="Generate Informational Log Entry"/>
+	</form>
+
+<!-- 
 	<form>
 	  <div class="form-row">
 		<div class="form-group col-md-4">
@@ -65,6 +106,7 @@
 		</div>
 	  </div>
 	</form>
+ -->
   </div>
 </div>
 

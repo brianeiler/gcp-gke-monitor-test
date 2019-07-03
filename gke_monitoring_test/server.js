@@ -5,6 +5,7 @@
 var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+require(__dirname+"/backend.js");
 
 
 // --------------------------------------------------------------------------------------
@@ -48,15 +49,62 @@ app.use(bodyParser.json());
 // This code handles button click events and launches the appropriate functions
 // --------------------------------------------------------------------------------------
 //
-app.post('/CPU_On', function(req, res) {
-  console.log(req.body);		// <--- Is this just for debug? If so, we can comment it out to keep logs clean
-  var isRunning = req.body.isRunning;
-  // console.log(isRunning);
-  JSONData.isRunning = isRunning;
-  fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
-  res.sendStatus(200);
+app.post('/StartCPU', function(req, res) {
+	JSONData.CpuIsRunning = true;
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+	res.redirect("/");
+	console.log("CPU load started");
 });
 
+app.post('/StopCPU', function(req, res) {
+	JSONData.CpuIsRunning = false;
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+	res.redirect("/");
+	console.log("CPU load stopped");
+});
+
+app.post('/IncreaseUsers', function(req, res) {
+	var userCount = JSONData.UserCount
+	userCount = userCount + 1
+	JSONData.UserCount = userCount;
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+	res.redirect("/");
+	console.log("User Count now: " & userCount);
+});
+
+app.post('/DeceaseUsers', function(req, res) {
+	var userCount = JSONData.UserCount
+	if (userCount > 0) {
+		userCount = userCount - 1
+		JSONData.UserCount = userCount;
+		fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+		res.redirect("/");
+	}
+	else {
+		userCount = 0;
+	}
+	console.log("User Count now: " & userCount);
+});
+
+app.post('/SendLogCritical', function(req, res) {
+	res.redirect("/");
+	console.log("This is a CRITICAL log entry");
+});
+
+app.post('/SendLogError', function(req, res) {
+	res.redirect("/");
+	console.log("This is an ERROR log entry");
+});
+
+app.post('/SendLogWarning', function(req, res) {
+	res.redirect("/");
+	console.log("This is a WARNING log entry");
+});
+
+app.post('/SendLogInformational', function(req, res) {
+	res.redirect("/");
+	console.log("This is an INFORMATIONAL log entry");
+});
 
 
 // --------------------------------------------------------------------------------------
@@ -76,7 +124,7 @@ var DoWhileRunning = function() {
 
 //Begin the running process
 var StartRunning = function() {
-	data.isRunning = true;
+	data.CpuIsRunning = true;
 	JSON.stringify(data);
 	// sendJSON(data)
 	// writeToFile(data);
@@ -85,7 +133,7 @@ var StartRunning = function() {
 var StopRunning = function() {
 	toggle.checked = false;
 	btnCpuStart.disabled = false;
-	data.isRunning = false;
+	data.CpuIsRunning = false;
 	JSON.stringify(data);
 	// sendJSON(data)
 	// writeToFile(data)
