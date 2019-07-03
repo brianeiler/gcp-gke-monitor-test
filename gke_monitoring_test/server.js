@@ -24,7 +24,7 @@ var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
 setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
-
+setTimeout(getMetadata, 2000);
 
 // Express Ports
 const PORT = 8080;
