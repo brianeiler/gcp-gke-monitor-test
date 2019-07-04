@@ -4,7 +4,6 @@
 var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
-const axios = require('axios');
 const gcpMetadata = require('gcp-metadata');
 
 // --------------------------------------------------------------------------------------
@@ -72,7 +71,7 @@ async function getMetadata() {
 
 	if (await gcpMetadata.isAvailable()) {
 	};
-	var zone = await gcpMetadata.instance('zone');
+	var zone = await gcpMetadata.instance();
 	console.log(zone) // ...Instance hostname
 
 // 	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
