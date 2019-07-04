@@ -83,7 +83,7 @@ async function getMetadata() {
 function getClusterName() {
 	var result = axios.get(METADATA_CLUSTERNAME_URL, {
 	 headers: {
-	   Metadata-Flavor: 'Google'
+	   'Metadata-Flavor': 'Google'
 	 }
 	})
 	return result;
@@ -104,7 +104,7 @@ function getClusterName() {
 function getZoneName() {
 	var result = axios.get(METADATA_CLUSTERNAME_URL, {
 	 headers: {
-	   Metadata-Flavor: 'Google'
+	   'Metadata-Flavor': 'Google'
 	 }
 	})
 	return result;
