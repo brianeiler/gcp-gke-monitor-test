@@ -17,6 +17,13 @@ var JSONData = require( dataFilePath);    // Reads the JSON data file to get cur
 const {google} = require('googleapis');
 const monitoring = require('@google-cloud/monitoring');
 const client = new monitoring.MetricServiceClient();
+var projectId = "";
+var pod_id = "";
+var namespace_name = "";
+var zone_name = "";
+var cluster_name = "";
+var pod_name = "";
+
 
 // Initialize the JSON file to false and 0 users
 var cpuLoadRunning = false;
@@ -204,6 +211,8 @@ async function writeStackdriverMetricData() {
 	//
 	// This function uses the global variable "userCount" for its value
 	//
+	
+	
 	const dataPoint = {
 	  interval: {
 		endTime: {
@@ -228,7 +237,7 @@ async function writeStackdriverMetricData() {
 		  project_id: 'projectId',
 		  location: 'zone_name',
 		  cluster_name: 'cluster_name',
-		  namespace_name: 'namespace',
+		  namespace_name: 'namespace_name',
 		  pod_name: 'pod_name',
 		},
 	  },
