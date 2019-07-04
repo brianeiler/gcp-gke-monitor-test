@@ -109,7 +109,7 @@ function getZoneName() {
       return res.data;
     })
     .catch(err => {
-      console.log("Error while getting zone_name");
+      console.log("Error while getting zone_name" + err.data);
       return "";
     });
 }
