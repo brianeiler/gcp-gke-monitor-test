@@ -5,6 +5,7 @@ var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 const axios = require('axios');
+const gcpMetadata = require('gcp-metadata');
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -64,6 +65,37 @@ const HOST = '0.0.0.0';
 // var cluster_name = "";
 // var pod_name = "";
 
+async function getMetadata() {
+	// Get the project information from GCP
+	projectId = await google.auth.getProjectId();
+	console.log('project id is: ' + projectId);
+
+	if (const isAvailable = await gcpMetadata.isAvailable()) {
+	};
+	const data = await gcpMetadata.instance('hostname');
+	console.log(data) // ...Instance hostname
+
+// 	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
+// 	  .then(response => {
+// 		console.log(response.data.url);
+// 		console.log(response.data.explanation);
+// 	  })
+// 	  .catch(error => {
+// 		console.log(error);
+// 	  });
+// 
+// 	axios.get('http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
+// 	  .then(response => {
+// 		console.log(response.data.url);
+// 		console.log(response.data.explanation);
+// 	  })
+// 	  .catch(error => {
+// 		console.log(error);
+// 	  });
+// 
+
+}
+async func
 
 
 
@@ -159,9 +191,12 @@ app.post('/SendLogInformational', function(req, res) {
 
 // --------------------------------------------------------------------------------------
 // SECTION: Main Functions
-// Code that performs the core application functions
+// Code called from the press of buttons.
 // --------------------------------------------------------------------------------------
 //
+
+setInterval(metricExport, 60000);
+
 
 function initData() {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
@@ -184,38 +219,18 @@ async function cpuEventLoop() {
 	return answer;
 }
 
-setInterval(metricExport, 60000);
-
 function metricExport() {
 	writeStackdriverMetricData();
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
-async function getMetadata() {
-	// Get the project information from GCP
-	projectId = await google.auth.getProjectId();
-	console.log('project id is: ' + projectId);
 
-	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
-	  .then(response => {
-		console.log(response.data.url);
-		console.log(response.data.explanation);
-	  })
-	  .catch(error => {
-		console.log(error);
-	  });
+// --------------------------------------------------------------------------------------
+// SECTION: Stackdriver Functions
+// Code that creates the Stackdriver metrics and writes the timeSeries data
+// --------------------------------------------------------------------------------------
+//
 
-	axios.get('http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
-	  .then(response => {
-		console.log(response.data.url);
-		console.log(response.data.explanation);
-	  })
-	  .catch(error => {
-		console.log(error);
-	  });
-
-
-}
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
 	// The descriptor is only created once.
