@@ -4,6 +4,7 @@
 var http = require('http');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+const axios = require('axios');
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -25,6 +26,7 @@ var cluster_name = "";
 var pod_name = "";
 
 
+
 // Initialize the JSON file to false and 0 users
 var cpuLoadRunning = false;
 var userCount = 0;
@@ -32,10 +34,35 @@ JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
 setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
 setTimeout(getMetadata, 2000);
+setTimeout(createStackdriverMetricDescriptor, 5000);
 
 // Express Ports
 const PORT = 8080;
 const HOST = '0.0.0.0';
+// --------------------------------------------------------------------------------------
+// SECTION: Environment Setup
+// This code loads values from environment variables if they exist
+// --------------------------------------------------------------------------------------
+//
+// Ensure required ENV vars are set
+// let requiredEnv = [
+//   'HOSTNAME'
+// ];
+// let unsetEnv = requiredEnv.filter((env) => !(typeof process.env[env] !== 'undefined'));
+// 
+// if (unsetEnv.length > 0) {
+//   throw new Error("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
+// }
+// if (typeof (query !== 'undefined' && query !== null){
+//    doStuff();
+// }
+// 
+// var projectId = "";
+// var pod_guid = "";
+// var namespace_name = "";
+// var zone_name = "";
+// var cluster_name = "";
+// var pod_name = "";
 
 
 
@@ -129,11 +156,6 @@ app.post('/SendLogInformational', function(req, res) {
 	console.log('This is an INFORMATIONAL log entry');
 });
 
-app.post('/CreateMetric', function(req, res) {
-	createStackdriverMetricDescriptor();
-	res.redirect("/");
-});
-
 
 // --------------------------------------------------------------------------------------
 // SECTION: Main Functions
@@ -165,6 +187,7 @@ async function cpuEventLoop() {
 setInterval(metricExport, 60000);
 
 function metricExport() {
+	writeStackdriverMetricData();
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
@@ -172,6 +195,26 @@ async function getMetadata() {
 	// Get the project information from GCP
 	projectId = await google.auth.getProjectId();
 	console.log('project id is: ' + projectId);
+
+	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
+	  .then(response => {
+		console.log(response.data.url);
+		console.log(response.data.explanation);
+	  })
+	  .catch(error => {
+		console.log(error);
+	  });
+
+	axios.get('curl http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
+	  .then(response => {
+		console.log(response.data.url);
+		console.log(response.data.explanation);
+	  })
+	  .catch(error => {
+		console.log(error);
+	  });
+
+
 }
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
