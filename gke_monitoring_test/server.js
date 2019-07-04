@@ -95,7 +95,7 @@ function getClusterName() {
 	};
 
 	var callback = function(response) {
-	  var str;
+	  var str = "";
 	  response.on('data', function (chunk) {
 		str += chunk;
 	  });
