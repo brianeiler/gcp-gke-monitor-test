@@ -95,7 +95,7 @@ async function getMetadata() {
 // 
 
 }
-async func
+
 
 
 
