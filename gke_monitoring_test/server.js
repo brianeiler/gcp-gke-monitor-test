@@ -82,33 +82,33 @@ async function getMetadata() {
 	
 }
 
-function getClusterName(cb) {
+function getClusterName() {
   const request = axios.create({
     baseURL: METADATA_CLUSETERNAME_URL,
     headers: { "Metadata-Flavor": "Google" }
   });
   request
     .get("/", (req, res) => {
-      return cb(res.data);
+      return res.data;
     })
     .catch(err => {
       console.log("Error while talking to metadata server, assuming localhost");
-      return cb("localhost");
+      return "";
     });
 }
 
-function getZoneName(cb) {
+function getZoneName() {
   const request = axios.create({
     baseURL: METADATA_ZONE_URL,
     headers: { "Metadata-Flavor": "Google" }
   });
   request
     .get("/", (req, res) => {
-      return cb(res.data);
+      return res.data;
     })
     .catch(err => {
       console.log("Error while talking to metadata server, assuming localhost");
-      return cb("localhost");
+      return "";
     });
 }
 
