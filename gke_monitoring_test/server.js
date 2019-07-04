@@ -168,7 +168,7 @@ function metricExport() {
 async function getMetadata() {
 	// Get the project information from GCP
 	var projectId = await google.auth.getProjectId();
-	console.log('project id is: ' + typeof(projectId));
+	console.log('project id is: ' + projectId);
 }
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
