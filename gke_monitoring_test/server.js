@@ -205,7 +205,7 @@ async function getMetadata() {
 		console.log(error);
 	  });
 
-	axios.get('curl http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
+	axios.get('http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
 	  .then(response => {
 		console.log(response.data.url);
 		console.log(response.data.explanation);
