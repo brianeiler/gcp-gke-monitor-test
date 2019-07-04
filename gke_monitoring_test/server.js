@@ -76,7 +76,7 @@ async function getMetadata() {
 	console.log('zone name is: ' + zone_name);
 	
 	cluster_name = await getClusterName();
-	console.log('cluster name is: ' + cluser_name);
+	console.log('cluster name is: ' + cluster_name);
 	
 }
 
