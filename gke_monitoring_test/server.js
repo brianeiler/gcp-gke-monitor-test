@@ -132,7 +132,7 @@ function getZoneName() {
 		//console.log(req.data);
 		// console.log(str);
 		var array1 = str.split("/");
-		zone_name = array[3];
+		zone_name = array1[3];
 	  });
 	}
 
