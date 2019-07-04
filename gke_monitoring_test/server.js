@@ -82,7 +82,7 @@ async function getMetadata() {
 
 function getClusterName() {
   const request = axios.create({
-    baseURL: METADATA_CLUSETERNAME_URL,
+    baseURL: METADATA_CLUSTERNAME_URL,
     headers: { "Metadata-Flavor": "Google" }
   });
   request
