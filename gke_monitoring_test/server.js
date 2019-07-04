@@ -114,7 +114,7 @@ function getZoneName() {
 		}
 	};
 
-	callback = function(response) {
+	var callback = function(response) {
 	  response.on('data', function (chunk) {
 		str += chunk;
 	  });
