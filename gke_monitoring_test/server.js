@@ -69,11 +69,20 @@ async function getMetadata() {
 	projectId = await google.auth.getProjectId();
 	console.log('project id is: ' + projectId);
 
-	if (await gcpMetadata.isAvailable()) {
-	};
-	var zone = await gcpMetadata.instance.attributes();
-	console.log(zone) // ...Instance hostname
+	const isAvailable = await gcpMetadata.isAvailable();
+	
+    if (isAvailable) {
+      // grab all top level metadata from the service
+      const instanceMetadata = await gcpMetadata.instance();
+      console.log('Instance metadata:');
+      console.log(instanceMetadata);
 
+      // get all project level metadata
+      const projectMetadata = await gcpMetadata.project();
+      console.log('Project metadata:');
+      console.log(projectMetadata);
+    }
+	
 // 	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
 // 	  .then(response => {
 // 		console.log(response.data.url);
