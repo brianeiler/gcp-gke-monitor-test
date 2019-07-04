@@ -38,107 +38,22 @@ var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
 setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
-getMetadata();
-setTimeout(displayVars, 2000);
-setTimeout(createStackdriverMetricDescriptor, 5000);
+
 
 
 // --------------------------------------------------------------------------------------
 // SECTION: Environment Setup
 // This code loads values from environment variables if they exist
 // --------------------------------------------------------------------------------------
-//
-// Ensure required ENV vars are set
-// let requiredEnv = [
-//   'HOSTNAME'
-// ];
-// let unsetEnv = requiredEnv.filter((env) => !(typeof process.env[env] !== 'undefined'));
 // 
-// if (unsetEnv.length > 0) {
-//   throw new Error("Required ENV variables are not set: [" + unsetEnv.join(', ') + "]");
-// }
-// if (typeof (query !== 'undefined' && query !== null){
-//    doStuff();
-// }
-// 
-// var projectId = "";
-// var pod_guid = "";
-// var namespace_name = "";
-// var zone_name = "";
-// var cluster_name = "";
-// var pod_name = "";
+getMetadata();
+setTimeout(displayVars, 2000);
+setTimeout(createStackdriverMetricDescriptor, 5000);
 
-async function getMetadata() {
-	// Get the project information from GCP
-	projectId = await google.auth.getProjectId();
-	zone_name = await getZoneName();
-	cluster_name = await getClusterName();
-	
-}
+const pod_guid = process.env.POD_ID;
+const namespace_name = process.env.NAMESPACE;
+const pod_name = process.env.HOSTNAME;
 
-function displayVars() {
-	console.log('project id is: ' + projectId);
-	console.log('cluster name is: ' + cluster_name);
-	console.log('zone name is: ' + zone_name);
-}
-
-function getClusterName() {
-	var options = {
-		host: 'metadata',
-		port: 80,
-		path: '/computeMetadata/v1/instance/name',
-//		path: '/computeMetadata/v1/instance/attributes/cluster-name',
-		method: 'GET',
-		headers: {
-			"Metadata-Flavor": 'Google'
-		}
-	};
-
-	var callback = function(response) {
-	  var str = "";
-	  response.on('data', function (chunk) {
-		str += chunk;
-	  });
-
-	  response.on('end', function () {
-		//console.log(req.data);
-		// console.log(str);
-		cluster_name = str;
-	  });
-	}
-
-	var req = http.request(options, callback).end();
-	return cluster_name;
-}
-
-function getZoneName() {
-	var options = {
-		host: 'metadata',
-		port: 80,
-		path: '/computeMetadata/v1/instance/zone',
-		method: 'GET',
-		headers: {
-			"Metadata-Flavor": 'Google'
-		}
-	};
-
-	var callback = function(response) {
-	  var str = "";
-	  response.on('data', function (chunk) {
-		str += chunk;
-	  });
-
-	  response.on('end', function () {
-		//console.log(req.data);
-		// console.log(str);
-		var array1 = str.split("/");
-		zone_name = array1[3];
-	  });
-	}
-
-	var req = http.request(options, callback).end();
-	return zone_name;
-}
 
 
 // --------------------------------------------------------------------------------------
@@ -266,6 +181,77 @@ function metricExport() {
 	console.log('Exporting metrics... userCount = ' + userCount);
 }
 
+async function getMetadata() {
+	// Get the project information from GCP
+	projectId = await google.auth.getProjectId();
+	zone_name = await getZoneName();
+	cluster_name = await getClusterName();
+	
+}
+
+function displayVars() {
+	console.log('project id is: ' + projectId);
+	console.log('cluster name is: ' + cluster_name);
+	console.log('zone name is: ' + zone_name);
+}
+
+function getClusterName() {
+	var options = {
+		host: 'metadata',
+		port: 80,
+		path: '/computeMetadata/v1/instance/name',
+//		path: '/computeMetadata/v1/instance/attributes/cluster-name',
+		method: 'GET',
+		headers: {
+			"Metadata-Flavor": 'Google'
+		}
+	};
+
+	var callback = function(response) {
+	  var str = "";
+	  response.on('data', function (chunk) {
+		str += chunk;
+	  });
+
+	  response.on('end', function () {
+		//console.log(req.data);
+		// console.log(str);
+		cluster_name = str;
+	  });
+	}
+
+	var req = http.request(options, callback).end();
+	return cluster_name;
+}
+
+function getZoneName() {
+	var options = {
+		host: 'metadata',
+		port: 80,
+		path: '/computeMetadata/v1/instance/zone',
+		method: 'GET',
+		headers: {
+			"Metadata-Flavor": 'Google'
+		}
+	};
+
+	var callback = function(response) {
+	  var str = "";
+	  response.on('data', function (chunk) {
+		str += chunk;
+	  });
+
+	  response.on('end', function () {
+		//console.log(req.data);
+		// console.log(str);
+		var array1 = str.split("/");
+		zone_name = array1[3];
+	  });
+	}
+
+	var req = http.request(options, callback).end();
+	return zone_name;
+}
 
 // --------------------------------------------------------------------------------------
 // SECTION: Stackdriver Functions
