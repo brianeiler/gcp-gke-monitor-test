@@ -73,11 +73,16 @@ async function getMetadata() {
 	console.log('project id is: ' + projectId);
 
 	zone_name = await getZoneName();
-	setTimeout(console.log('zone name is: ' + zone_name),2000);
+	
+	setTimeout(displayVars, 2000);
 	
 // 	cluster_name = await getClusterName();
 // 	console.log('cluster name is: ' + cluster_name);
 	
+}
+
+function displayVars() {
+	console.log('zone name is: ' + zone_name);
 }
 
 function getClusterName() {
