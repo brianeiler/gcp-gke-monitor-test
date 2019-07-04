@@ -1,18 +1,23 @@
 #!/usr/bin/env node
 
 "use strict";
-var http = require('http');
-var fs = require('fs');
-var bodyParser = require('body-parser');
-const gcpMetadata = require('gcp-metadata');
+const http = require('http');
+const fs = require('fs');
+const process = require('process');
+const bodyParser = require('body-parser');
+// const gcpMetadata = require('gcp-metadata');
+const axios = require('axios');
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
 // This code sets configuration values and retrieves the server state from a JSON file
 // --------------------------------------------------------------------------------------
 //
-var dataFilePath = './scripts/data.json'
+const dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
+
+const METADATA_CLUSTERNAME_URL = "http://metadata/computeMetadata/v1/instance/attributes/cluster-name";
+const METADATA_ZONE_URL = "http://metadata/computeMetadata/v1/instance/zone";
 
 // Google Stackdriver Monitoring initialization
 const {google} = require('googleapis');
@@ -36,9 +41,7 @@ setTimeout(initData, 2000);		// Needed to allow the file to open before we write
 setTimeout(getMetadata, 2000);
 setTimeout(createStackdriverMetricDescriptor, 5000);
 
-// Express Ports
-const PORT = 8080;
-const HOST = '0.0.0.0';
+
 // --------------------------------------------------------------------------------------
 // SECTION: Environment Setup
 // This code loads values from environment variables if they exist
@@ -69,42 +72,45 @@ async function getMetadata() {
 	projectId = await google.auth.getProjectId();
 	console.log('project id is: ' + projectId);
 
-	const isAvailable = await gcpMetadata.isAvailable();
+ 	var zone_str = await getZoneName();
+	var array1 = zone_str.split("/");
+	zone_name = array1[3];
+	console.log('zone name is: ' + zone_name);
 	
-    if (isAvailable) {
-      // grab all top level metadata from the service
-      const instanceMetadata = await gcpMetadata.instance();
-      console.log('Instance metadata:');
-      console.log(instanceMetadata);
-
-      // get all project level metadata
-      const projectMetadata = await gcpMetadata.project();
-      console.log('Project metadata:');
-      console.log(projectMetadata);
-    }
+	cluster_name = await getClusterName();
+	console.log('cluster name is: ' + cluser_name);
 	
-// 	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
-// 	  .then(response => {
-// 		console.log(response.data.url);
-// 		console.log(response.data.explanation);
-// 	  })
-// 	  .catch(error => {
-// 		console.log(error);
-// 	  });
-// 
-// 	axios.get('http://metadata/computeMetadata/v1/instance/zone -H "Metadata-Flavor: Google"')
-// 	  .then(response => {
-// 		console.log(response.data.url);
-// 		console.log(response.data.explanation);
-// 	  })
-// 	  .catch(error => {
-// 		console.log(error);
-// 	  });
-// 
-
 }
 
+function getClusterName(cb) {
+  const request = axios.create({
+    baseURL: METADATA_CLUSETERNAME_URL,
+    headers: { "Metadata-Flavor": "Google" }
+  });
+  request
+    .get("/", (req, res) => {
+      return cb(res.data);
+    })
+    .catch(err => {
+      console.log("Error while talking to metadata server, assuming localhost");
+      return cb("localhost");
+    });
+}
 
+function getZoneName(cb) {
+  const request = axios.create({
+    baseURL: METADATA_ZONE_URL,
+    headers: { "Metadata-Flavor": "Google" }
+  });
+  request
+    .get("/", (req, res) => {
+      return cb(res.data);
+    })
+    .catch(err => {
+      console.log("Error while talking to metadata server, assuming localhost");
+      return cb("localhost");
+    });
+}
 
 
 // --------------------------------------------------------------------------------------
@@ -326,8 +332,11 @@ var errorHandler = function() {
 	//TODO
 }
 
-app.listen(PORT, HOST);
-console.log(`Web server started. Running on http://${HOST}:${PORT}`);
+const port = process.env.PORT || 8080;
+app.listen(port, HOST);
+app.listen(port, () => {
+  console.log('Web server listening on port', port);
+});
 
 
 
