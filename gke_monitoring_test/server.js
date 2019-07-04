@@ -72,8 +72,8 @@ async function getMetadata() {
 
 	if (await gcpMetadata.isAvailable()) {
 	};
-	const data = await gcpMetadata.instance('hostname');
-	console.log(data) // ...Instance hostname
+	var zone = await gcpMetadata.instance('zone');
+	console.log(zone) // ...Instance hostname
 
 // 	axios.get('http://metadata/computeMetadata/v1/instance/attributes/cluster-name -H "Metadata-Flavor: Google"')
 // 	  .then(response => {
