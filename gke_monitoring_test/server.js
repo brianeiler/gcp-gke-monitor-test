@@ -18,7 +18,7 @@ const {google} = require('googleapis');
 const monitoring = require('@google-cloud/monitoring');
 const client = new monitoring.MetricServiceClient();
 var projectId = "";
-var pod_id = "";
+var pod_guid = "";
 var namespace_name = "";
 var zone_name = "";
 var cluster_name = "";
@@ -36,10 +36,6 @@ setTimeout(getMetadata, 2000);
 // Express Ports
 const PORT = 8080;
 const HOST = '0.0.0.0';
-	
-// GCP Project Information
-const projectId = 'YOUR_PROJECT_ID';
-const pod_guid = 'YOUR_POD_GUID';
 
 
 
