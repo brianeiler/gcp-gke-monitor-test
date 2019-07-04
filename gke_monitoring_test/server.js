@@ -128,7 +128,7 @@ function getZoneName() {
 	}
 
 	var req = http.request(options, callback).end();
-	return req.data;
+	return callback;
 }
 
 
