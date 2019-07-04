@@ -72,8 +72,8 @@ async function getMetadata() {
 	projectId = await google.auth.getProjectId();
 	console.log('project id is: ' + projectId);
 
-	zone_name = getZoneName();
-	console.log('zone name is: ' + await zone_name);
+	zone_name = await getZoneName();
+	console.log('zone name is: ' + zone_name);
 	
 // 	cluster_name = await getClusterName();
 // 	console.log('cluster name is: ' + cluster_name);
@@ -122,13 +122,13 @@ function getZoneName() {
 
 	  response.on('end', function () {
 		//console.log(req.data);
-		console.log(str);
+		// console.log(str);
 		return str;
 	  });
 	}
 
 	var req = http.request(options, callback).end();
-	
+	return var;
 }
 
 
