@@ -100,18 +100,7 @@ function getClusterName() {
 
 	x.end();
 	return result;
-//   const request = axios.create({
-//     baseURL: METADATA_CLUSTERNAME_URL,
-//     headers: { "Metadata-Flavor": "Google" }
-//   });
-//   request
-//     .get("/", (req, res) => {
-//       return res.data;
-//     })
-//     .catch(err => {
-//       console.log("Error while getting cluster_name");
-//       return "";
-//     });
+
 }
 
 function getZoneName() {
@@ -124,40 +113,21 @@ function getZoneName() {
 			"Metadata-Flavor": 'Google'
 		}
 	};
-	var result;
-	var x = http.request(options,function(res){
-		console.log("Connected");
-		res.on('data',function(data){
-			result = data;
-		});
-	});
 
-	x.end();
-	return result;
+	callback = function(response) {
+	  response.on('data', function (chunk) {
+		str += chunk;
+	  });
 
-// 	var result = axios.get(METADATA_CLUSTERNAME_URL, {
-// 	 headers: {
-// 	   'Metadata-Flavor': 'Google'
-// 	 }
-// 	})
-// 	return result;
-// 	
-//   const request = axios.create({
-//     baseURL: METADATA_ZONE_URL,
-//     headers: { "Metadata-Flavor": "Google" }
-//   });
-//   request
-// //     .get("/", (req, res) => {
-// //       var result = res.data;
-// //       var array1 = result.split("/");
-// //       return array1[3];
-//     .get("/", (req, res) => {
-//       return res.data;
-//     })
-//     .catch(err => {
-//       console.log("Error while getting zone_name" + err);
-//       return "";
-//     });
+	  response.on('end', function () {
+		console.log(req.data);
+		console.log(str);
+		zone_name = str
+	  });
+	}
+
+	var req = http.request(options, callback).end();
+	
 }
 
 
