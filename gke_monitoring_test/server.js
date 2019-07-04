@@ -90,7 +90,7 @@ function getClusterName() {
       return res.data;
     })
     .catch(err => {
-      console.log("Error while talking to metadata server, assuming localhost");
+      console.log("Error while getting cluster_name");
       return "";
     });
 }
@@ -109,7 +109,7 @@ function getZoneName() {
       return res.data;
     })
     .catch(err => {
-      console.log("Error while talking to metadata server, assuming localhost");
+      console.log("Error while getting zone_name");
       return "";
     });
 }
