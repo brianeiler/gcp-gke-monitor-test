@@ -104,7 +104,9 @@ function getZoneName() {
   });
   request
     .get("/", (req, res) => {
-      return res.data;
+      var result = res.data;
+      var array1 = result.split("/");
+      return array1[3];
     })
     .catch(err => {
       console.log("Error while talking to metadata server, assuming localhost");
