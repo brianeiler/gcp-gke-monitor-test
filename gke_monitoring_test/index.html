@@ -27,16 +27,13 @@
   <div class="jumbotron"  style="padding:40px;">
 	<h1>Custom Metrics</h1>
 	<p>The Custom Metrics function will increment a counter which is then exposed to Stackdriver Monitoring. In this example, the counter represents the number of active users in an application. You can increase or decrease the number of active users; however the value is only reported to Stackdriver <b> once per minute </b>.</p>
-	<form action="/CreateMetric" method="POST">
-		<input type="submit" value="Create SD Metric"/>
-	</form>
 	<form action="/IncreaseUsers" method="POST">
 		<input type="submit" value="Increase Users Counter"/>
 	</form>
 	<form action="/DecreaseUsers" method="POST">
 		<input type="submit" value="Decrease Users Counter"/>
 	</form>
- </div>
+  </div>
 </div>
 	
 <div style="margin:100px;">
