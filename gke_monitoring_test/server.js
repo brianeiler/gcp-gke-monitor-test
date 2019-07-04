@@ -75,8 +75,8 @@ async function getMetadata() {
 	zone_name = await getZoneName();
 	console.log('zone name is: ' + zone_name);
 	
-	cluster_name = await getClusterName();
-	console.log('cluster name is: ' + cluster_name);
+// 	cluster_name = await getClusterName();
+// 	console.log('cluster name is: ' + cluster_name);
 	
 }
 
@@ -115,13 +115,33 @@ function getClusterName() {
 }
 
 function getZoneName() {
-	var result = axios.get(METADATA_CLUSTERNAME_URL, {
-	 headers: {
-	   'Metadata-Flavor': 'Google'
-	 }
-	})
+	var options = {
+		host: 'metadata',
+		port: 80,
+		path: '/computeMetadata/v1/instance/zone',
+		method: 'GET',
+		headers: {
+			"Metadata-Flavor": 'Google'
+		}
+	};
+	var result;
+	var x = http.request(options,function(res){
+		console.log("Connected");
+		res.on('data',function(data){
+			result = data;
+		});
+	});
+
+	x.end();
 	return result;
-	
+
+// 	var result = axios.get(METADATA_CLUSTERNAME_URL, {
+// 	 headers: {
+// 	   'Metadata-Flavor': 'Google'
+// 	 }
+// 	})
+// 	return result;
+// 	
 //   const request = axios.create({
 //     baseURL: METADATA_ZONE_URL,
 //     headers: { "Metadata-Flavor": "Google" }
