@@ -38,7 +38,8 @@ var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
 setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
-setTimeout(getMetadata, 2000);
+getMetadata();
+setTimeout(displayVars, 2000);
 setTimeout(createStackdriverMetricDescriptor, 5000);
 
 
@@ -70,18 +71,14 @@ setTimeout(createStackdriverMetricDescriptor, 5000);
 async function getMetadata() {
 	// Get the project information from GCP
 	projectId = await google.auth.getProjectId();
-	console.log('project id is: ' + projectId);
-
 	zone_name = await getZoneName();
-	
-	setTimeout(displayVars, 2000);
-	
-// 	cluster_name = await getClusterName();
-// 	console.log('cluster name is: ' + cluster_name);
+	cluster_name = await getClusterName();
 	
 }
 
 function displayVars() {
+	console.log('project id is: ' + projectId);
+	console.log('cluster name is: ' + cluster_name);
 	console.log('zone name is: ' + zone_name);
 }
 
@@ -89,23 +86,29 @@ function getClusterName() {
 	var options = {
 		host: 'metadata',
 		port: 80,
-		path: '/computeMetadata/v1/instance/zone',
+		path: '/computeMetadata/v1/instance/name',
+//		path: '/computeMetadata/v1/instance/attributes/cluster-name',
 		method: 'GET',
 		headers: {
 			"Metadata-Flavor": 'Google'
 		}
 	};
-	var result;
-	var x = http.request(options,function(res){
-		console.log("Connected");
-		res.on('data',function(data){
-			result = data;
-		});
-	});
 
-	x.end();
-	return result;
+	var callback = function(response) {
+	  var str;
+	  response.on('data', function (chunk) {
+		str += chunk;
+	  });
 
+	  response.on('end', function () {
+		//console.log(req.data);
+		// console.log(str);
+		cluster_name = str;
+	  });
+	}
+
+	var req = http.request(options, callback).end();
+	return cluster_name;
 }
 
 function getZoneName() {
