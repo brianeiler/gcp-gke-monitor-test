@@ -70,7 +70,7 @@ async function getMetadata() {
 	projectId = await google.auth.getProjectId();
 	console.log('project id is: ' + projectId);
 
-	if (const isAvailable = await gcpMetadata.isAvailable()) {
+	if (await gcpMetadata.isAvailable()) {
 	};
 	const data = await gcpMetadata.instance('hostname');
 	console.log(data) // ...Instance hostname
