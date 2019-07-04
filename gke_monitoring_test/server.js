@@ -131,7 +131,8 @@ function getZoneName() {
 	  response.on('end', function () {
 		//console.log(req.data);
 		// console.log(str);
-		zone_name = str;
+		var array1 = str.split("/");
+		zone_name = array[3];
 	  });
 	}
 
