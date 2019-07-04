@@ -94,7 +94,7 @@ function getClusterName() {
 	var x = http.request(options,function(res){
 		console.log("Connected");
 		res.on('data',function(data){
-			result = data);
+			result = data;
 		});
 	});
 
