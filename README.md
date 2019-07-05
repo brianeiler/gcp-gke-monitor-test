@@ -3,8 +3,8 @@ This is a web-based test utility for Google Kubernetes Engine (GKE) and Stackdri
 
 &nbsp;
 
-# Legal Disclaimer
-This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
+# Legal Disclaimer !!!
+**WARNING!** This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
 
 &nbsp;
 
