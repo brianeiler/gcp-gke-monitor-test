@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - image: <my-image>
+    command:
+    - my-app --pod_id=$(POD_ID) --pod_name=$(POD_NAME) --namespace_name=$(NAMESPACE_NAME)
+    env:
+    - name: POD_ID
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.uid
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: NAMESPACE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+          

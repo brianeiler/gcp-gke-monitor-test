@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bad-image-app-v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: bad-image-app-v1
+  template:
+    metadata:
+      labels:
+        run: bad-image-app-v1
+        name: bad-image-app-v1
+    spec:
+      containers:
+      - image: gcr.io/google-samples/bad-image-app:1.0
+        name: bad-image-app-v1
+        ports:
+        - containerPort: 8080
+          protocol: TCP
