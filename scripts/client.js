@@ -99,7 +99,7 @@ var loaded = function() {
 }
 
 
-function loadJSON(callback) {   
+function loadJSON(callback) {
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");
   xobj.open('GET', dataFilePath, true);
