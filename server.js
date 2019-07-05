@@ -9,7 +9,7 @@ const NanoTimer = require('nanotimer');
 
 // Debug log messages enabled? (true/false)
 var debugMode = process.env.DEBUG || false;
-var dryRunMode = process.env.DRYRUN || true;
+var dryRunMode = process.env.DRYRUN || false;
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
