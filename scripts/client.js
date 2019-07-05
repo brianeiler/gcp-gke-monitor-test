@@ -8,6 +8,8 @@ var debugMode = false;
 const dataFilePath = './scripts/data.json'	// TO-DO: I'm not sure if this needs to be a URL or not. Need to test it.
 
 var loaded = function() {
+
+	console.log("Loaded");
 	// --------------------------------------------------------------------------------------
 	// SECTION: Initialization
 	// This code sets configuration values and retrieves the server state from a JSON file.
