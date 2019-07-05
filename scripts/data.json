@@ -1,4 +1,5 @@
 {
-  "CpuIsRunning": true,
-  "UserCount": 0
+  "CpuIsRunning": false,
+  "UserCount": 0,
+  "debugMode": false
 }
