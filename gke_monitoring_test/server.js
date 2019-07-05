@@ -285,11 +285,11 @@ async function writeStackdriverMetricData() {
 	  resource: {
 		type: 'k8s_pod',
 		labels: {
-		  project_id: 'projectId',
-		  location: 'zone_name',
-		  cluster_name: 'cluster_name',
-		  namespace_name: 'namespace_name',
-		  pod_name: 'pod_name',
+		  project_id: projectId,
+		  location: zone_name,
+		  cluster_name: cluster_name,
+		  namespace_name: namespace_name,
+		  pod_name: pod_name,
 		},
 	  },
 	  points: [dataPoint],
