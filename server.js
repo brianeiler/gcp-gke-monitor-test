@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 // Debug log messages enabled? (true/false)
 var debugMode = process.env.DEBUG || false;
-
+var dryRunMode = process.env.DRYRUN || true;
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -19,9 +19,9 @@ const dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
 
 // Google Stackdriver Monitoring initialization
-const {google} = require('googleapis');
-const monitoring = require('@google-cloud/monitoring');
-const client = new monitoring.MetricServiceClient();
+if (!dryRunMode) var {google} = require('googleapis');
+if (!dryRunMode) var monitoring = require('@google-cloud/monitoring');
+if (!dryRunMode) var client = new monitoring.MetricServiceClient();
 var projectId = "";
 var pod_guid = "";
 var namespace_name = "";
@@ -196,7 +196,7 @@ function startMonitoring() {
 
 async function cpuEventLoop() {
 	var answer = 0;
-	while (cpuLoadRunning) {
+	if (!dryRunMode) while (cpuLoadRunning) {
 		for (var i = 0; i < 10000000; i++) {
 			answer += Math.random() * Math.random();
 		}
@@ -212,9 +212,9 @@ function metricExport() {
 
 async function getMetadata() {
 	// Get the project information from GCP
-	projectId = await google.auth.getProjectId();
-	zone_name = await getZoneName();
-	cluster_name = await getClusterName();
+	if (!dryRunMode) projectId = await google.auth.getProjectId();
+	if (!dryRunMode) zone_name = await getZoneName();
+	if (!dryRunMode) cluster_name = await getClusterName();
 }
 
 function getClusterName() {
@@ -297,7 +297,7 @@ async function createStackdriverMetricDescriptor() {
 	  },
 	};
 	// Creates a custom metric descriptor
-	const [descriptor] = await client.createMetricDescriptor(request);
+	if (!dryRunMode) var [descriptor] = await client.createMetricDescriptor(request);
 	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
 }
 
@@ -341,7 +341,7 @@ async function writeStackdriverMetricData() {
 	  timeSeries: [timeSeriesData],
 	};
 	// Writes time series data
-	const result = await client.createTimeSeries(request);
+	if (!dryRunMode) var result = await client.createTimeSeries(request);
 }
 
 function getDateTime() {
