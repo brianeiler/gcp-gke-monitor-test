@@ -7,7 +7,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script type='text/javascript' src='/scripts/client.js'></script>
 </head>
-<body>
+<body onload="loaded()">
 
 <div style="margin:50px;">
   <div class="jumbotron"  style="padding:40px;">
@@ -15,11 +15,11 @@
 	<p>The Generate CPU Load function will place a load on a single core CPU by performing math operations in a loop.</p>
 
 	<form action="/StartCPU" method="POST">
-		<input type="submit" value="Start CPU Load"/>
+		<input id="btnStartCPU" type="submit" value="Start CPU Load"/>
 	</form>
 
 	<form action="/StopCPU" method="POST">
-		<input type="submit" value="Stop CPU Load"/>
+		<input id ="btnStopCPU" type="submit" value="Stop CPU Load"/>
 	</form>
   </div>
 </div>
@@ -30,7 +30,7 @@
 	<p>The Custom Metrics function will increment a counter which is then exposed to Stackdriver Monitoring. In this example, the counter represents the number of active users in an application. You can increase or decrease the number of active users; however the value is only reported to Stackdriver <b> once per minute </b>.</p>
 	<p>Click the <b>Start Monitoring</b> button to create the Stackdriver metric descriptor. This button will also trigger the test utility to start exporting the timeSeries data (the custom metric values) to Stackdriver.</p>
 	<form action="/StartMonitoring" method="POST">
-		<input type="submit" value="Start Monitoring"/>
+		<input  type="submit" value="Start Monitoring"/>
 	</form>
 	<form action="/IncreaseUsers" method="POST">
 		<input type="submit" value="Increase Users Counter"/>
