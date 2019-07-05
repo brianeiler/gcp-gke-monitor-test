@@ -149,6 +149,7 @@ function loadJSON(callback) {
   } else {
     // handle data not found
   }
+}
 
 const getCookie = (name) => {
   const value = "; " + document.cookie;
