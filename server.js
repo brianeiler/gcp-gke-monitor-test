@@ -6,6 +6,9 @@ const fs = require('fs');
 const process = require('process');
 const bodyParser = require('body-parser');
 
+// Debug log messages enabled? (true/false)
+const debug_mode = process.env.DEBUG || false;
+
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -75,7 +78,7 @@ app.post('/StartCPU', function(req, res) {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	cpuEventLoop();
-	console.log(getDateTime() + ',DEBUG, Message: CPU load started');
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: CPU load started');
 });
 
 app.post('/StopCPU', function(req, res) {
@@ -83,7 +86,7 @@ app.post('/StopCPU', function(req, res) {
 	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
 });
 
 app.post('/StartMonitoring', function(req, res) {
@@ -92,7 +95,7 @@ app.post('/StartMonitoring', function(req, res) {
 	createStackdriverMetricDescriptor()
 	.then(result => startMonitoring(result))
 	.then(endResult => {
-	  console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
+	  if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
 	})
 	.catch(() => {
 	  console.log(getDateTime() + ',ERROR, Message: Custom Metric export failed.');
@@ -105,7 +108,7 @@ app.post('/IncreaseUsers', function(req, res) {
 	JSONData.UserCount = userCount;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/DecreaseUsers', function(req, res) {
@@ -119,7 +122,7 @@ app.post('/DecreaseUsers', function(req, res) {
 	else {
 		userCount = 0;
 	}
-	console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/SendLogCritical', function(req, res) {
@@ -151,7 +154,7 @@ app.post('/SendLogInformational', function(req, res) {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(getDateTime() + ',DEBUG, Message: Web server listening on port', port);
+  if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Web server listening on port', port);
 });
 
 
@@ -188,7 +191,7 @@ async function cpuEventLoop() {
 
 function metricExport() {
 	writeStackdriverMetricData();
-	console.log(getDateTime() + ',DEBUG, Message: Exporting metrics... userCount = ' + userCount);
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Exporting metrics... userCount = ' + userCount);
 }
 
 async function getMetadata() {
@@ -279,7 +282,7 @@ async function createStackdriverMetricDescriptor() {
 	};
 	// Creates a custom metric descriptor
 	const [descriptor] = await client.createMetricDescriptor(request);
-	console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
+	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
 }
 
 async function writeStackdriverMetricData() {
@@ -369,7 +372,7 @@ var errorHandler = function() {
 //
 
 // 	function displayVars() {
-// 		console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
-// 		console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
-// 		console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
+// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
+// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
+// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
 // 	}
