@@ -5,6 +5,7 @@ const http = require('http');
 const fs = require('fs');
 const process = require('process');
 const bodyParser = require('body-parser');
+const NanoTimer = require('nanotimer');
 
 // Debug log messages enabled? (true/false)
 var debugMode = process.env.DEBUG || false;
@@ -188,9 +189,10 @@ function initData() {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 }
 
-function sleep(ms){
+function nanoSleep(ms){
     return new Promise(resolve=>{
-        setTimeout(resolve,ms)
+		var timer = new NanoTimer();
+		timer.setTimeout(resolve,"",ms)
     })
 }
 
@@ -201,11 +203,12 @@ function startMonitoring() {
 
 async function cpuEventLoop() {
 	var answer = 0;
+	var timer = new NanoTimer();
 	if (!dryRunMode) while (cpuLoadRunning) {
-		for (var i = 0; i < 10000000; i++) {
+		for (var i = 0; i < 1000; i++) {
 			answer += Math.random() * Math.random();
 		}
-		await sleep(1);
+		await nanoSleep(100n);	// This timer accepts an integer followed by the unit: seconds (s), microseconds (u), and nanoseconds (n)
 	}
 	return answer;
 }
