@@ -5,7 +5,7 @@ var customMetricCreated = false;
 var userCount = 0;
 var debugMode = false;
 
-const dataFilePath = './scripts/data.json'
+const dataFilePath = './scripts/data.json'	// TO-DO: I'm not sure if this needs to be a URL or not. Need to test it.
 
 var loaded = function() {
 	// --------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ var loaded = function() {
 function loadJSON(callback) {   
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");
-  xobj.open('GET', './scripts/data.json', true);
+  xobj.open('GET', dataFilePath, true);
   xobj.onreadystatechange = function () {
     if (xobj.readyState == 4 && xobj.status == "200") {
       callback(JSON.parse(xobj.responseText));
