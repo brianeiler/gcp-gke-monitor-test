@@ -39,9 +39,6 @@ pod_guid = process.env.POD_ID;
 namespace_name = process.env.NAMESPACE;
 pod_name = process.env.HOSTNAME;
 
-// Create the StackDriver Metric Descriptor (required before sending data)
-setTimeout(createStackdriverMetricDescriptor, 2000);
-
 
 // --------------------------------------------------------------------------------------
 // SECTION: Express Engine configuration
@@ -78,7 +75,7 @@ app.post('/StartCPU', function(req, res) {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	cpuEventLoop();
-	console.log('CPU load started');
+	console.log(getDateTime() + ',DEBUG, Message: CPU load started');
 });
 
 app.post('/StopCPU', function(req, res) {
@@ -86,7 +83,28 @@ app.post('/StopCPU', function(req, res) {
 	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log('CPU load stopped');
+	console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
+});
+
+app.post('/StartMonitoring', function(req, res) {
+	res.redirect("/");
+
+	createStackdriverMetricDescriptor()
+	.then(result => startMonitoring(result))
+	.then(endResult => {
+	  console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
+	})
+	.catch(() => {
+	  console.log(getDateTime() + ',ERROR, Message: Custom Metric export failed.');
+	});
+// 	let promise = new Promise(function(resolve, reject) {
+// 	  createStackdriverMetricDescriptor() => resolve();
+// 	});
+// 	promise.then(
+// 	  result => startMonitoring(),
+// 	  error => console.log(getDateTime() + ',DEBUG, Message: ' +error)
+// 	);
+// 	promise.then(console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.'));
 });
 
 app.post('/IncreaseUsers', function(req, res) {
@@ -95,7 +113,7 @@ app.post('/IncreaseUsers', function(req, res) {
 	JSONData.UserCount = userCount;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	console.log('User Count now: ' + userCount);
+	console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/DecreaseUsers', function(req, res) {
@@ -109,27 +127,27 @@ app.post('/DecreaseUsers', function(req, res) {
 	else {
 		userCount = 0;
 	}
-	console.log('User Count now: ' + userCount);
+	console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/SendLogCritical', function(req, res) {
 	res.redirect("/");
-	console.log(Date.now() + ', Severity: CRITICAL, This is a test of a CRITICAL log entry.');
+	console.log(getDateTime() + ',CRITICAL, Message: This is a test of a CRITICAL log entry.');
 });
 
 app.post('/SendLogError', function(req, res) {
 	res.redirect("/");
-	console.log(Date.now() + ', Severity: ERROR, This is a test of an ERROR log entry.');
+	console.log(getDateTime() + ',ERROR, Message: This is a test of an ERROR log entry.');
 });
 
 app.post('/SendLogWarning', function(req, res) {
 	res.redirect("/");
-	console.log(Date.now() + ', Severity: WARNING, This is a test of a WARNING log entry.');
+	console.log(getDateTime() + ',WARNING, Message: This is a test of a WARNING log entry.');
 });
 
 app.post('/SendLogInformational', function(req, res) {
 	res.redirect("/");
-	console.log(Date.now() + ', Severity: INFORMATIONAL, This is a test of an INFORMATIONAL log entry.');
+	console.log(getDateTime() + ',INFO, Message: This is a test of an INFORMATIONAL log entry.');
 });
 
 
@@ -138,10 +156,10 @@ app.post('/SendLogInformational', function(req, res) {
 // Everything after this section will be functions
 // --------------------------------------------------------------------------------------
 //
-setInterval(metricExport, 60000);
+
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log('Web server listening on port', port);
+  console.log(getDateTime() + ',DEBUG, Message: Web server listening on port', port);
 });
 
 
@@ -160,6 +178,11 @@ function sleep(ms){
     })
 }
 
+function startMonitoring() {
+	//This function starts the export of custom metrics to Stackdriver, which occurs once per minute.
+	setInterval(metricExport, 60000);
+}
+
 async function cpuEventLoop() {
 	var answer = 0;
 	while (cpuLoadRunning) {
@@ -173,7 +196,7 @@ async function cpuEventLoop() {
 
 function metricExport() {
 	writeStackdriverMetricData();
-	console.log('Exporting metrics... userCount = ' + userCount);
+	console.log(getDateTime() + ',DEBUG, Message: Exporting metrics... userCount = ' + userCount);
 }
 
 async function getMetadata() {
@@ -187,8 +210,7 @@ function getClusterName() {
 	var options = {
 		host: 'metadata',
 		port: 80,
-		path: '/computeMetadata/v1/instance/name',
-//		path: '/computeMetadata/v1/instance/attributes/cluster-name',		// <-- This line must be swapped
+		path: '/computeMetadata/v1/instance/attributes/cluster-name',
 		method: 'GET',
 		headers: {
 			"Metadata-Flavor": 'Google'
@@ -200,8 +222,6 @@ function getClusterName() {
 		str += chunk;
 	  });
 	  response.on('end', function () {
-		//console.log(req.data);
-		// console.log(str);
 		cluster_name = str;
 	  });
 	}
@@ -239,8 +259,8 @@ async function createStackdriverMetricDescriptor() {
 	const request = {
 	  name: client.projectPath(projectId),
 	  metricDescriptor: {
-		description: 'Number of active users.',
-		displayName: 'Active Users',
+		description: 'TEST METRIC - Number of active users in the web application.',
+		displayName: 'Web App - Active Users',
 		type: 'custom.googleapis.com/webapp/active_users',
 		metricKind: 'GAUGE',
 		valueType: 'DOUBLE',
@@ -256,7 +276,7 @@ async function createStackdriverMetricDescriptor() {
 	};
 	// Creates a custom metric descriptor
 	const [descriptor] = await client.createMetricDescriptor(request);
-	console.log('Created custom Metric:\n');
+	console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
 }
 
 async function writeStackdriverMetricData() {
@@ -302,6 +322,32 @@ async function writeStackdriverMetricData() {
 	const result = await client.createTimeSeries(request);
 }
 
+function getDateTime() {
+	let now     = new Date(); 
+	let year    = now.getFullYear();
+	let month   = now.getMonth()+1; 
+	let day     = now.getDate();
+	let hour    = now.getHours();
+	let minute  = now.getMinutes();
+	let second  = now.getSeconds(); 
+	if(month.toString().length == 1) {
+		 month = '0'+month;
+	}
+	if(day.toString().length == 1) {
+		 day = '0'+day;
+	}   
+	if(hour.toString().length == 1) {
+		 hour = '0'+hour;
+	}
+	if(minute.toString().length == 1) {
+		 minute = '0'+minute;
+	}
+	if(second.toString().length == 1) {
+		 second = '0'+second;
+	}   
+	let dateTime = year+'/'+month+'/'+day+' '+hour+':'+minute+':'+second;   
+	return dateTime;
+}
 
 // --------------------------------------------------------------------------------------
 // SECTION: Error Handling
@@ -320,7 +366,7 @@ var errorHandler = function() {
 //
 
 // 	function displayVars() {
-// 		console.log('project id is: ' + projectId);
-// 		console.log('cluster name is: ' + cluster_name);
-// 		console.log('zone name is: ' + zone_name);
+// 		console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
+// 		console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
+// 		console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
 // 	}
