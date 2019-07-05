@@ -7,7 +7,7 @@ const process = require('process');
 const bodyParser = require('body-parser');
 
 // Debug log messages enabled? (true/false)
-const debug_mode = process.env.DEBUG || false;
+var debugMode = process.env.DEBUG || false;
 
 
 // --------------------------------------------------------------------------------------
@@ -34,6 +34,7 @@ var cpuLoadRunning = false;
 var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
+JSONData.debugMode = debugMode;
 setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
 
 // Set the configuration using Environment variables and GCP Metadata
@@ -78,7 +79,7 @@ app.post('/StartCPU', function(req, res) {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	cpuEventLoop();
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: CPU load started');
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: CPU load started');
 });
 
 app.post('/StopCPU', function(req, res) {
@@ -86,7 +87,7 @@ app.post('/StopCPU', function(req, res) {
 	JSONData.CpuIsRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
 });
 
 app.post('/StartMonitoring', function(req, res) {
@@ -95,7 +96,7 @@ app.post('/StartMonitoring', function(req, res) {
 	createStackdriverMetricDescriptor()
 	.then(result => startMonitoring(result))
 	.then(endResult => {
-	  if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
+	  if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
 	})
 	.catch(() => {
 	  console.log(getDateTime() + ',ERROR, Message: Custom Metric export failed.');
@@ -108,7 +109,7 @@ app.post('/IncreaseUsers', function(req, res) {
 	JSONData.UserCount = userCount;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/DecreaseUsers', function(req, res) {
@@ -122,7 +123,7 @@ app.post('/DecreaseUsers', function(req, res) {
 	else {
 		userCount = 0;
 	}
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: User Count now: ' + userCount);
 });
 
 app.post('/SendLogCritical', function(req, res) {
@@ -145,6 +146,21 @@ app.post('/SendLogInformational', function(req, res) {
 	console.log(getDateTime() + ',INFO, Message: This is a test of an INFORMATIONAL log entry.');
 });
 
+app.post('/EnableDebug', function(req, res) {
+	res.redirect("/");
+	debugMode = true;
+	JSONData.debugMode = debugMode;
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+	console.log(getDateTime() + ',INFO, Message: Debug Logging Enabled.');
+});
+
+app.post('/DisableDebug', function(req, res) {
+	res.redirect("/");
+	debugMode = false;
+	JSONData.debugMode = debugMode;
+	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+	console.log(getDateTime() + ',INFO, Message: Debug Logging Disabled.');
+});
 
 // --------------------------------------------------------------------------------------
 // SECTION: Routines
@@ -154,7 +170,7 @@ app.post('/SendLogInformational', function(req, res) {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Web server listening on port', port);
+  if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Web server listening on port', port);
 });
 
 
@@ -191,7 +207,7 @@ async function cpuEventLoop() {
 
 function metricExport() {
 	writeStackdriverMetricData();
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Exporting metrics... userCount = ' + userCount);
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Exporting metrics... userCount = ' + userCount);
 }
 
 async function getMetadata() {
@@ -282,7 +298,7 @@ async function createStackdriverMetricDescriptor() {
 	};
 	// Creates a custom metric descriptor
 	const [descriptor] = await client.createMetricDescriptor(request);
-	if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
+	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Created custom metric in Stackdriver.');
 }
 
 async function writeStackdriverMetricData() {
@@ -372,7 +388,7 @@ var errorHandler = function() {
 //
 
 // 	function displayVars() {
-// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
-// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
-// 		if (debug_mode) console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
+// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
+// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
+// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
 // 	}
