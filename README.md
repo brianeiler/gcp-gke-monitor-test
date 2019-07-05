@@ -1,5 +1,7 @@
 # Legal Disclaimer !!!
-**WARNING!** This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
+**WARNING!** This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. 
+
+**Use at your own risk!**
 
 &nbsp;
 
