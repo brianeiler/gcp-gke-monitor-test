@@ -5,6 +5,8 @@ var customMetricCreated = false;
 var userCount = 0;
 var debugMode = false;
 
+const dataFilePath = './scripts/data.json'
+
 var loaded = function() {
 	// --------------------------------------------------------------------------------------
 	// SECTION: Initialization
@@ -23,14 +25,21 @@ var loaded = function() {
 	// Set the CPU Load Generator document elements to objects
 	var btnStartCPU   = document.getElementById('btnStartCPU');
 	var btnStopCPU    = document.getElementById('btnStopCPU');
-	var lblCPUStatus  = document.getElementById('lblCPUStatus');	// Maps to the JSON cpuStatus Label for CPU Load Generator
+	var lblCPUStatus  = document.getElementById('lblCPUStatus');	// Maps to the JSON CpuLoadRunning flag
 	
 	// Set the Custom Metric document elements to objects
 	var btnStartMonitoring    = document.getElementById('btnStartMonitoring');
 	var btnIncreaseUserCount  = document.getElementById('btnIncreaseUserCount');
 	var btnDecreaseUserCount  = document.getElementById('btnDecreaseUserCount');
-	var lblCustomMetricStatus = document.getElementById('lblCustomMetricStatus');	// Maps to the JSON customMetricCreated flag
-	var lblCurrentUserCount   = document.getElementById('lblCurrentUserCount');		// Maps to the JSON userCount value
+	var lblCustomMetricStatus = document.getElementById('lblCustomMetricStatus');	// Maps to the JSON CustomMetricCreated flag
+	var lblCurrentUserCount   = document.getElementById('lblCurrentUserCount');		// Maps to the JSON UserCount value
+
+	// Set the Log Test document elements to objects
+	var btnEnableDebugLogging  = document.getElementById('btnEnableDebugLogging');
+	var btnDisableDebugLogging = document.getElementById('btnDisableDebugLogging');
+	var lblDebugLoggingStatus  = document.getElementById('lblDebugLoggingStatus');	// Maps to the JSON DebugMode flag
+
+
 
 	// --------------------------------------------------------------------------------------
 	// SECTION: Staging
@@ -43,64 +52,57 @@ var loaded = function() {
 		// CPU Load Generator is running, so disable the START button and set the status to "Running"
 		btnStartCPU.disabled   = true;
 		btnStopCPU.disabled    = false;
-		lblCPUStatus.innerHTML = "CPU load RUNNING";
+		lblCPUStatus.innerHTML = "STATUS: CPU Load Generator RUNNING";
 	}
 	else {
 		// CPU isn't running yet, so disable the stop button and set the status to "Not Running"
 		btnStartCPU.disabled   = false;
 		btnStopCPU.disabled    = true;
-		lblCPUStatus.innerHTML = "CPU load NOT running";
-	}	
+		lblCPUStatus.innerHTML = "STATUS: CPU Load Generator NOT running";
+	}
+
 	//
 	// Custom Metric Section
 	//
 	if (customMetricCreated) {
-		// CPU Load Generator is running, so disable the START button and set the status to "Running"
-		btnStartCPU.disabled   = true;
-		btnStopCPU.disabled    = false;
-		lblCPUStatus.innerHTML = "CPU load RUNNING";
+		// The Stackdriver custom metric descriptor has been created, we can now increase/decrease user count and report its status
+		btnStartMonitoring.disabled     = true;
+		btnIncreaseUserCount.disabled   = false;
+		btnDecreaseUserCount.disabled   = false;
+		lblCustomMetricStatus.innerHTML = "STATUS: Exporting custom metrics once per MINUTE";
+		lblCurrentUserCount.innerHTML   = "Current User Count = " + userCount;
 	}
 	else {
-		// CPU isn't running yet, so disable the stop button and set the status to "Not Running"
-		btnStartCPU.disabled   = false;
-		btnStopCPU.disabled    = true;
-		lblCPUStatus.innerHTML = "CPU load NOT running";
-	}	
+		// The Stackdriver custom metric descriptor has NOT been created, disable the increase/decrease user count buttons and report its inactive status
+		btnStartMonitoring.disabled     = false;
+		btnIncreaseUserCount.disabled   = true;
+		btnDecreaseUserCount.disabled   = true;
+		lblCustomMetricStatus.innerHTML = "STATUS: Inactive. You must click Start Monitoring";
+		lblCurrentUserCount.innerHTML   = "Current User Count = " + userCount;
+	}
 	
-	//If our JSON isn't yet loaded, load it
-	if(data == null)
-	{
-	 	loadJSON(function(json) {
-	  			console.log(json); // this will log out the json object
-	  			data = json;
-	  			console.log(data.isRunning)
-	  			running = (data.isRunning == "true" || data.isRunning == true) ? true : false ;
-	  			console.log(running);
-				if(running)
-					{
-						
-						toggle.checked = true;
-						loadButton.disabled = true;
-						DoWhileRunning();
-					}
-				else
-	{
-		toggle.checked = false;
-		loadButton.disabled = false;
-			//Add funcitonality to the generate load button
-	assignLoadButton();
+	//
+	// Log Test Section
+	//
+	if (debugMode) {
+		// The Debug Logging mode is active, disable the Enable button and report status
+		btnEnableDebugLogging.disabled  = true;
+		btnDisableDebugLogging.disabled = false;
+		lblDebugLoggingStatus.innerHTML = "STATUS: Debug-level Logging is ENABLED";
 	}
-
-		});
-	}
-
+	else {
+		// The Debug Logging mode is NOT active, disable the Disable button and report status
+		btnEnableDebugLogging.disabled  = false;
+		btnDisableDebugLogging.disabled = true;
+		lblDebugLoggingStatus.innerHTML = "STATUS: Debug-level Logging is disabled";
+	}	
 }
 
 
 function loadJSON(callback) {   
   var xobj = new XMLHttpRequest();
   xobj.overrideMimeType("application/json");
-  xobj.open('GET', './Scripts/data.json', true);
+  xobj.open('GET', './scripts/data.json', true);
   xobj.onreadystatechange = function () {
     if (xobj.readyState == 4 && xobj.status == "200") {
       callback(JSON.parse(xobj.responseText));
@@ -109,53 +111,3 @@ function loadJSON(callback) {
   xobj.send(null);  
 }
 
-
-//TODO: While running, check to see if we have stopped running
-var DoWhileRunning = function()
-{
-	//tempCode
-	setTimeout(StopRunning, 1000);
-}
-
-//Begin the running process
-var StartRunning = function()
-{
-	data.isRunning = true;
-	JSON.stringify(data);
-	PostFunction(data);
-	DoWhileRunning();
-}
-
-var StopRunning = function()
-{
-	toggle.checked = false;
-	loadButton.disabled = false;
-	data.isRunning = false;
-	JSON.stringify(data);
-	PostFunction(data);
-	assignLoadButton();
-
-}
-
-var assignLoadButton = function() 
-{
-	running = (data.isRunning == "true" || data.isRunning == true) ? true : false ;
-	loadButton.onclick = function(){
-	  			
-		if(!running && data != null)
-		{
-			//Launch things
-			StartRunning();
-			toggle.checked = true;
-			loadButton.disabled = true;
-		}
-	}
-}
-
-var PostFunction = function(myData)
-{
-	const url = "http://localhost:8080/CPU_On";
-	$.post(url, myData, function(dataBack, status){
-		console.log(dataBack)
-	}, 'json');
-}
