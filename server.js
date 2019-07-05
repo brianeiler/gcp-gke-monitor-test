@@ -43,8 +43,8 @@ setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize it
 // Set the configuration using Environment variables and GCP Metadata
 getMetadata();
 pod_guid = process.env.POD_ID;
-namespace_name = process.env.NAMESPACE;
-pod_name = process.env.HOSTNAME;
+namespace_name = process.env.NAMESPACE_NAME;
+pod_name = process.env.POD_NAME;
 
 
 // --------------------------------------------------------------------------------------
