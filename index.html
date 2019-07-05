@@ -19,8 +19,9 @@
 	</form>
 
 	<form action="/StopCPU" method="POST">
-		<input id ="btnStopCPU" type="submit" value="Stop CPU Load"/>
+		<input id="btnStopCPU" type="submit" value="Stop CPU Load"/>
 	</form>
+	<span id="lblCPUStatus">Test Not started</span>
   </div>
 </div>
 
@@ -30,14 +31,16 @@
 	<p>The Custom Metrics function will increment a counter which is then exposed to Stackdriver Monitoring. In this example, the counter represents the number of active users in an application. You can increase or decrease the number of active users; however the value is only reported to Stackdriver <b> once per minute </b>.</p>
 	<p>Click the <b>Start Monitoring</b> button to create the Stackdriver metric descriptor. This button will also trigger the test utility to start exporting the timeSeries data (the custom metric values) to Stackdriver.</p>
 	<form action="/StartMonitoring" method="POST">
-		<input  type="submit" value="Start Monitoring"/>
+		<input id="btnStartMonitoring" type="submit" value="Start Monitoring"/>
 	</form>
 	<form action="/IncreaseUsers" method="POST">
-		<input type="submit" value="Increase Users Counter"/>
+		<input id="btnIncreaseUserCount" type="submit" value="Increase Users Counter"/>
 	</form>
 	<form action="/DecreaseUsers" method="POST">
-		<input type="submit" value="Decrease Users Counter"/>
+		<input id="btnDecreaseUserCount" type="submit" value="Decrease Users Counter"/>
 	</form>
+	<span id="lblCustomMetricStatus">Metrics status</span>
+	<span id="lblCurrentUserCount">Current User count</span>
   </div>
 </div>
 	
@@ -58,11 +61,12 @@
 		<input type="submit" value="Generate Informational Log Entry"/>
 	</form>
 	<form action="/EnableDebug" method="POST">
-		<input type="submit" value="Enable Debug Logging"/>
+		<input id="btnEnableDebugLogging" type="submit" value="Enable Debug Logging"/>
 	</form>
 	<form action="/DisableDebug" method="POST">
-		<input type="submit" value="Disable Debug Logging"/>
+		<input id="btnDisableDebugLogging" type="submit" value="Disable Debug Logging"/>
 	</form>
+	<span id="lblDebugLoggingStatus">Current User count</span>
   </div>
 </div>
 gcp-gke-monitor-test:1.0.0

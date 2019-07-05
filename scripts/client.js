@@ -4,6 +4,22 @@ var cpuLoadRunning = false;
 var customMetricCreated = false;
 var userCount = 0;
 var debugMode = false;
+// Set the CPU Load Generator document elements to objects
+var btnStartCPU   = null;
+var btnStopCPU    = null;
+var lblCPUStatus  = null;	// Maps to the JSON CpuLoadRunning flag
+
+// Set the Custom Metric document elements to objects
+var btnStartMonitoring    = null;
+var btnIncreaseUserCount  = null;
+var btnDecreaseUserCount  = null;
+var lblCustomMetricStatus = null;	// Maps to the JSON CustomMetricCreated flag
+var lblCurrentUserCount   = null;		// Maps to the JSON UserCount value
+
+// Set the Log Test document elements to objects
+var btnEnableDebugLogging  = null;
+var btnDisableDebugLogging = null;
+var lblDebugLoggingStatus  = null;
 
 const dataFilePath = './scripts/data.json'	// TO-DO: I'm not sure if this needs to be a URL or not. Need to test it.
 
@@ -18,32 +34,44 @@ var loaded = function() {
 
 	// Retrieves the server-side data.json file via HTTP and parses its current values into variables.
 	loadJSON(function(JSONData) {
+		console.log(JSONData);
 		cpuLoadRunning      = JSONData.CpuLoadRunning;
-		customMetricCreated = JSONData.CustomMetricCreated;
+		customMetricCreated = JSONData.customMetricCreated;
 		userCount           = JSONData.UserCount;
-		debugMode           = JSONData.DebugMode;
-	});
+		debugMode           = JSONData.debugMode;
+		SetVars();
+		DataIsLoaded();
 
-	// Set the CPU Load Generator document elements to objects
-	var btnStartCPU   = document.getElementById('btnStartCPU');
-	var btnStopCPU    = document.getElementById('btnStopCPU');
-	var lblCPUStatus  = document.getElementById('lblCPUStatus');	// Maps to the JSON CpuLoadRunning flag
+	});
+	console.log(debugMode);
+
+
+}
+
+function SetVars()
+{
+		// Set the CPU Load Generator document elements to objects
+	btnStartCPU   = document.getElementById('btnStartCPU');
+	btnStopCPU    = document.getElementById('btnStopCPU');
+	lblCPUStatus  = document.getElementById('lblCPUStatus');	// Maps to the JSON CpuLoadRunning flag
 	
 	// Set the Custom Metric document elements to objects
-	var btnStartMonitoring    = document.getElementById('btnStartMonitoring');
-	var btnIncreaseUserCount  = document.getElementById('btnIncreaseUserCount');
-	var btnDecreaseUserCount  = document.getElementById('btnDecreaseUserCount');
-	var lblCustomMetricStatus = document.getElementById('lblCustomMetricStatus');	// Maps to the JSON CustomMetricCreated flag
-	var lblCurrentUserCount   = document.getElementById('lblCurrentUserCount');		// Maps to the JSON UserCount value
+	btnStartMonitoring    = document.getElementById('btnStartMonitoring');
+	btnIncreaseUserCount  = document.getElementById('btnIncreaseUserCount');
+	btnDecreaseUserCount  = document.getElementById('btnDecreaseUserCount');
+	lblCustomMetricStatus = document.getElementById('lblCustomMetricStatus');	// Maps to the JSON CustomMetricCreated flag
+	lblCurrentUserCount   = document.getElementById('lblCurrentUserCount');		// Maps to the JSON UserCount value
 
 	// Set the Log Test document elements to objects
-	var btnEnableDebugLogging  = document.getElementById('btnEnableDebugLogging');
-	var btnDisableDebugLogging = document.getElementById('btnDisableDebugLogging');
-	var lblDebugLoggingStatus  = document.getElementById('lblDebugLoggingStatus');	// Maps to the JSON DebugMode flag
+	btnEnableDebugLogging  = document.getElementById('btnEnableDebugLogging');
+	btnDisableDebugLogging = document.getElementById('btnDisableDebugLogging');
+	lblDebugLoggingStatus  = document.getElementById('lblDebugLoggingStatus');	// Maps to the JSON DebugMode flag
+}
 
 
-
-	// --------------------------------------------------------------------------------------
+function DataIsLoaded()
+{
+		// --------------------------------------------------------------------------------------
 	// SECTION: Staging
 	// This code sets the document controls and status text based on the variables set above.
 	// --------------------------------------------------------------------------------------
@@ -100,16 +128,40 @@ var loaded = function() {
 	}	
 }
 
-
 function loadJSON(callback) {   
-  var xobj = new XMLHttpRequest();
-  xobj.overrideMimeType("application/json");
-  xobj.open('GET', dataFilePath, true);
-  xobj.onreadystatechange = function () {
-    if (xobj.readyState == 4 && xobj.status == "200") {
-      callback(JSON.parse(xobj.responseText));
-    }
-  };
-  xobj.send(null);  
+  // var xobj = new XMLHttpRequest();
+  // xobj.overrideMimeType("application/json");
+  // xobj.open('GET', dataFilePath, true);
+  // xobj.onreadystatechange = function () {
+  //   if (xobj.readyState == 4 && xobj.status == "200") {
+  //     callback(JSON.parse(xobj.responseText));
+  //   }
+  // };
+  // xobj.send(null);
+
+  let dataCookie = getCookie('data');
+  deleteCookie('data');
+
+  if (dataCookie) {
+    const data = callback(parseObjectFromCookie(dataCookie));
+    // work with data. `data` is equal to `visitCard` from the server
+
+  } else {
+    // handle data not found
+  }
 }
 
+const getCookie = (name) => {
+  const value = "; " + document.cookie;
+  const parts = value.split("; " + name + "=");
+  if (parts.length === 2) return parts.pop().split(";").shift();
+};
+
+const deleteCookie = (name) => {
+  document.cookie = name + '=; max-age=0;';
+};
+
+const parseObjectFromCookie = (cookie) => {
+  const decodedCookie = decodeURIComponent(cookie);
+  return JSON.parse(decodedCookie);
+};

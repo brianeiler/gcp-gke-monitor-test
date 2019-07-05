@@ -1,6 +1,7 @@
 {
   "CpuLoadRunning": false,
-  "UserCount": 0,
+  "UserCount": 1,
   "DebugMode": false,
-  "CustomMetricCreated": false
+  "customMetricCreated": true,
+  "debugMode": false
 }
