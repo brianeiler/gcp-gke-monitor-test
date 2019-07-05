@@ -97,14 +97,6 @@ app.post('/StartMonitoring', function(req, res) {
 	.catch(() => {
 	  console.log(getDateTime() + ',ERROR, Message: Custom Metric export failed.');
 	});
-// 	let promise = new Promise(function(resolve, reject) {
-// 	  createStackdriverMetricDescriptor() => resolve();
-// 	});
-// 	promise.then(
-// 	  result => startMonitoring(),
-// 	  error => console.log(getDateTime() + ',DEBUG, Message: ' +error)
-// 	);
-// 	promise.then(console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.'));
 });
 
 app.post('/IncreaseUsers', function(req, res) {
@@ -222,10 +214,16 @@ function getClusterName() {
 		str += chunk;
 	  });
 	  response.on('end', function () {
-		cluster_name = str;
+		if (str.length < 128) {
+		  cluster_name = str;
+		}
+		else {
+		  cluster_name = 'no_cluster_name';
+		}
 	  });
 	}
 	var req = http.request(options, callback).end();
+	
 	return cluster_name;
 }
 
@@ -245,8 +243,13 @@ function getZoneName() {
 		str += chunk;
 	  });
 	  response.on('end', function () {
-		var array1 = str.split("/");
-		zone_name = array1[3];
+		if (str.length < 128) {
+		  var array1 = str.split("/");
+		  zone_name = array1[3];
+		}
+		else {
+		  zone_name = 'no_zone_name';
+		}
 	  });
 	}
 	var req = http.request(options, callback).end();
