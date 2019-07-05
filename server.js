@@ -35,7 +35,7 @@ var cpuLoadRunning = false;
 var customMetricCreated = false;
 var userCount = 0;
 JSONData.CpuLoadRunning = cpuLoadRunning;
-JSONData.CustomMetricCreated = customMetricCreated;
+JSONData.customMetricCreated = customMetricCreated;
 JSONData.UserCount = userCount;
 JSONData.DebugMode = debugMode;
 setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
@@ -59,7 +59,9 @@ const router = express.Router();
 var server = http.createServer(app);
 
 router.get('/',function(req,res){
+  res.cookie('data', JSON.stringify(JSONData));
   res.sendFile(path.join(__dirname+'/index.html'));
+  
 });
 
 // Store all client-side JS, CSS, and user-readable data files in the scripts folder.
