@@ -1,5 +1,5 @@
 {
-  "CpuIsRunning": false,
+  "CpuLoadRunning": false,
   "UserCount": 0,
   "DebugMode": false,
   "CustomMetricCreated": false

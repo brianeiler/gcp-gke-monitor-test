@@ -14,7 +14,7 @@ var loaded = function() {
 
 	// Retrieves the server-side data.json file via HTTP and parses its current values into variables.
 	loadJSON(function(JSONData) {
-		cpuLoadRunning      = JSONData.CpuIsRunning;
+		cpuLoadRunning      = JSONData.CpuLoadRunning;
 		customMetricCreated = JSONData.CustomMetricCreated;
 		userCount           = JSONData.UserCount;
 		debugMode           = JSONData.DebugMode;

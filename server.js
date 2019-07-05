@@ -33,7 +33,7 @@ var pod_name = "";
 var cpuLoadRunning = false;
 var customMetricCreated = false;
 var userCount = 0;
-JSONData.CpuIsRunning = cpuLoadRunning;
+JSONData.CpuLoadRunning = cpuLoadRunning;
 JSONData.CustomMetricCreated = customMetricCreated;
 JSONData.UserCount = userCount;
 JSONData.DebugMode = debugMode;
@@ -77,7 +77,7 @@ app.use(bodyParser.json());
 //
 app.post('/StartCPU', function(req, res) {
 	cpuLoadRunning = true;
-	JSONData.CpuIsRunning = cpuLoadRunning;
+	JSONData.CpuLoadRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	cpuEventLoop();
@@ -86,7 +86,7 @@ app.post('/StartCPU', function(req, res) {
 
 app.post('/StopCPU', function(req, res) {
 	cpuLoadRunning = false;
-	JSONData.CpuIsRunning = cpuLoadRunning;
+	JSONData.CpuLoadRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
