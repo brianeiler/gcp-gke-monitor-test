@@ -114,22 +114,22 @@ app.post('/DecreaseUsers', function(req, res) {
 
 app.post('/SendLogCritical', function(req, res) {
 	res.redirect("/");
-	console.log('This is a CRITICAL log entry');
+	console.log(date.now() + ', Severity: CRITICAL, This is a test of a CRITICAL log entry.');
 });
 
 app.post('/SendLogError', function(req, res) {
 	res.redirect("/");
-	console.log('This is an ERROR log entry');
+	console.log(date.now() + ', Severity: ERROR, This is a test of an ERROR log entry.');
 });
 
 app.post('/SendLogWarning', function(req, res) {
 	res.redirect("/");
-	console.log('This is a WARNING log entry');
+	console.log(date.now() + ', Severity: WARNING, This is a test of a WARNING log entry.');
 });
 
 app.post('/SendLogInformational', function(req, res) {
 	res.redirect("/");
-	console.log('This is an INFORMATIONAL log entry');
+	console.log(date.now() + ', Severity: INFORMATIONAL, This is a test of an INFORMATIONAL log entry.');
 });
 
 
@@ -300,7 +300,6 @@ async function writeStackdriverMetricData() {
 	};
 	// Writes time series data
 	const result = await client.createTimeSeries(request);
-	console.log(`Done writing time series data.`, result);
 }
 
 
