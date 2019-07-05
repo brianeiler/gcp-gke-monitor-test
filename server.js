@@ -31,8 +31,10 @@ var pod_name = "";
 
 // Initialize the JSON file to false and 0 users
 var cpuLoadRunning = false;
+var customMetricCreated = false;
 var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
+JSONData.customMetricCreated = customMetricCreated;
 JSONData.UserCount = userCount;
 JSONData.debugMode = debugMode;
 setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
@@ -96,7 +98,10 @@ app.post('/StartMonitoring', function(req, res) {
 	createStackdriverMetricDescriptor()
 	.then(result => startMonitoring(result))
 	.then(endResult => {
-	  if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
+		customMetricCreated = true;
+		JSONData.customMetricCreated = customMetricCreated;
+		fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
+		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: Custom Metric export started.');
 	})
 	.catch(() => {
 	  console.log(getDateTime() + ',ERROR, Message: Custom Metric export failed.');
@@ -278,7 +283,7 @@ function getZoneName() {
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
 	// The descriptor is only created once.
-	const request = {
+	if (!dryRunMode) var request = {
 	  name: client.projectPath(projectId),
 	  metricDescriptor: {
 		description: 'TEST METRIC - Number of active users in the web application.',
@@ -336,7 +341,7 @@ async function writeStackdriverMetricData() {
 	  },
 	  points: [dataPoint],
 	};
-	const request = {
+	if (!dryRunMode) var request = {
 	  name: client.projectPath(projectId),
 	  timeSeries: [timeSeriesData],
 	};
@@ -379,16 +384,3 @@ function getDateTime() {
 var errorHandler = function() {
 	//TODO
 }
-
-
-// --------------------------------------------------------------------------------------
-// SECTION: Code Graveyard
-// All code below this point is not called and should be disposable
-// --------------------------------------------------------------------------------------
-//
-
-// 	function displayVars() {
-// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: project id is: ' + projectId);
-// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: cluster name is: ' + cluster_name);
-// 		if (debugMode) console.log(getDateTime() + ',DEBUG, Message: zone name is: ' + zone_name);
-// 	}
