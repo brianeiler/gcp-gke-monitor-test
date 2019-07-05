@@ -14,6 +14,9 @@ export my_cluster=standard-cluster-1
 source <(kubectl completion bash)
 gcloud container clusters create $my_cluster --num-nodes "3" --enable-stackdriver-kubernetes --enable-ip-alias --zone $my_zone
 
+=== Hello-v2 Deployment ===
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatformTraining/training-data-analyst/master/courses/ak8s/17_Stackdriver/hello-v2.yaml
+kubectl get deployments
 
 === GCP-GKE-Monitor-Test Manifest (Deployment and Service) ===
 kubectl apply -f https://raw.githubusercontent.com/brianeiler/gcp-gke-monitor-test/master/gcp-gke-monitor-test.yaml
