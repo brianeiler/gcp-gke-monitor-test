@@ -23,9 +23,9 @@ function sleep(ms){
 ```
 
 ## Custom Metric Generator
-The test utility also can send custom metrics to Stackdriver.  You must first click the Start Monitoring button to create the Stackdriver Custom Metric Descriptor. This function then begins exporting the value of the custom metric to Stackdriver once every minute. The custom metric in this example is called "WebApp - Active Users" and is associated with the "k8s_pod" resource in Stackdriver Monitoring.
+The test utility also can send custom metrics to Stackdriver.  You must first click the Start Monitoring button to create the Stackdriver Custom Metric Descriptor. This function then begins exporting the value of the custom metric to Stackdriver once every minute. The custom metric in this example is called "Web App - Active Users" and is associated with the "k8s_pod" resource in Stackdriver Monitoring.
 
-#### Create Stackdriver Custom Metric Descriptor
+### Create Stackdriver Custom Metric Descriptor
 This is the code used to create the custom metric descriptor in Stackdriver:
 ```
 async function createStackdriverMetricDescriptor() {
@@ -55,7 +55,7 @@ async function createStackdriverMetricDescriptor() {
 }
 ```
 
-#### Write timeSeries Data to Stackdriver
+### Write timeSeries Data to Stackdriver
 This is the code that writes the timeSeries data values to Stackdriver once per minute:
 ```
 app.post('/StartMonitoring', function(req, res) {
@@ -130,3 +130,30 @@ async function writeStackdriverMetricData() {
 
 ## Log Generator
 The test utility has four log generation buttons: Critical, Error, Warning, and Informational. Each sends a date stamped message to stdOut, where it can be caught by the logging engine.  There is also a toggle to enable/disable DEBUG level logging. By default debug logging is **Disabled**. When debug logging is enabled, each function call reports its status to stdOut.
+
+This is the code which creates the test event logs:
+```
+app.post('/SendLogCritical', function(req, res) {
+	res.redirect("/");
+	console.log(getDateTime() + ',CRITICAL, Message: This is a test of a CRITICAL log entry.');
+});
+
+app.post('/SendLogError', function(req, res) {
+	res.redirect("/");
+	console.log(getDateTime() + ',ERROR, Message: This is a test of an ERROR log entry.');
+});
+
+app.post('/SendLogWarning', function(req, res) {
+	res.redirect("/");
+	console.log(getDateTime() + ',WARNING, Message: This is a test of a WARNING log entry.');
+});
+
+app.post('/SendLogInformational', function(req, res) {
+	res.redirect("/");
+	console.log(getDateTime() + ',INFO, Message: This is a test of an INFORMATIONAL log entry.');
+});
+```
+
+
+# Legal Disclaimer
+This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
