@@ -5,8 +5,7 @@ const http = require('http');
 const fs = require('fs');
 const process = require('process');
 const bodyParser = require('body-parser');
-// const gcpMetadata = require('gcp-metadata');
-const axios = require('axios');
+
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -15,9 +14,6 @@ const axios = require('axios');
 //
 const dataFilePath = './scripts/data.json'
 var JSONData = require( dataFilePath);    // Reads the JSON data file to get current server state
-
-const METADATA_CLUSTERNAME_URL = "http://metadata/computeMetadata/v1/instance/attributes/cluster-name";
-const METADATA_ZONE_URL = "http://metadata/computeMetadata/v1/instance/zone";
 
 // Google Stackdriver Monitoring initialization
 const {google} = require('googleapis');
@@ -30,34 +26,25 @@ var zone_name = "";
 var cluster_name = "";
 var pod_name = "";
 
-
-
 // Initialize the JSON file to false and 0 users
 var cpuLoadRunning = false;
 var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
 JSONData.UserCount = userCount;
-setTimeout(initData, 2000);		// Needed to allow the file to open before we write to it
+setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
 
-
-
-// --------------------------------------------------------------------------------------
-// SECTION: Environment Setup
-// This code loads values from environment variables if they exist
-// --------------------------------------------------------------------------------------
-// 
+// Set the configuration using Environment variables and GCP Metadata
 getMetadata();
-setTimeout(displayVars, 2000);
-setTimeout(createStackdriverMetricDescriptor, 5000);
-
 const pod_guid = process.env.POD_ID;
 const namespace_name = process.env.NAMESPACE;
 const pod_name = process.env.HOSTNAME;
 
+// Create the StackDriver Metric Descriptor (required before sending data)
+setTimeout(createStackdriverMetricDescriptor, 2000);
 
 
 // --------------------------------------------------------------------------------------
-// SECTION: Routes for Express
+// SECTION: Express Engine configuration
 // This code sets up the Express web engine and its endpoints (called routes)
 // --------------------------------------------------------------------------------------
 //
@@ -147,14 +134,22 @@ app.post('/SendLogInformational', function(req, res) {
 
 
 // --------------------------------------------------------------------------------------
+// SECTION: Routines
+// Everything after this section will be functions
+// --------------------------------------------------------------------------------------
+//
+setInterval(metricExport, 60000);
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log('Web server listening on port', port);
+});
+
+
+// --------------------------------------------------------------------------------------
 // SECTION: Main Functions
 // Code called from the press of buttons.
 // --------------------------------------------------------------------------------------
 //
-
-setInterval(metricExport, 60000);
-
-
 function initData() {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 }
@@ -186,13 +181,6 @@ async function getMetadata() {
 	projectId = await google.auth.getProjectId();
 	zone_name = await getZoneName();
 	cluster_name = await getClusterName();
-	
-}
-
-function displayVars() {
-	console.log('project id is: ' + projectId);
-	console.log('cluster name is: ' + cluster_name);
-	console.log('zone name is: ' + zone_name);
 }
 
 function getClusterName() {
@@ -200,26 +188,23 @@ function getClusterName() {
 		host: 'metadata',
 		port: 80,
 		path: '/computeMetadata/v1/instance/name',
-//		path: '/computeMetadata/v1/instance/attributes/cluster-name',
+//		path: '/computeMetadata/v1/instance/attributes/cluster-name',		// <-- This line must be swapped
 		method: 'GET',
 		headers: {
 			"Metadata-Flavor": 'Google'
 		}
 	};
-
 	var callback = function(response) {
 	  var str = "";
 	  response.on('data', function (chunk) {
 		str += chunk;
 	  });
-
 	  response.on('end', function () {
 		//console.log(req.data);
 		// console.log(str);
 		cluster_name = str;
 	  });
 	}
-
 	var req = http.request(options, callback).end();
 	return cluster_name;
 }
@@ -234,35 +219,23 @@ function getZoneName() {
 			"Metadata-Flavor": 'Google'
 		}
 	};
-
 	var callback = function(response) {
 	  var str = "";
 	  response.on('data', function (chunk) {
 		str += chunk;
 	  });
-
 	  response.on('end', function () {
-		//console.log(req.data);
-		// console.log(str);
 		var array1 = str.split("/");
 		zone_name = array1[3];
 	  });
 	}
-
 	var req = http.request(options, callback).end();
 	return zone_name;
 }
 
-// --------------------------------------------------------------------------------------
-// SECTION: Stackdriver Functions
-// Code that creates the Stackdriver metrics and writes the timeSeries data
-// --------------------------------------------------------------------------------------
-//
-
 async function createStackdriverMetricDescriptor() {
 	// This function will create the metric descriptor for the timeSeries data
 	// The descriptor is only created once.
-
 	const request = {
 	  name: client.projectPath(projectId),
 	  metricDescriptor: {
@@ -281,7 +254,6 @@ async function createStackdriverMetricDescriptor() {
 		],
 	  },
 	};
-
 	// Creates a custom metric descriptor
 	const [descriptor] = await client.createMetricDescriptor(request);
 	console.log('Created custom Metric:\n');
@@ -293,8 +265,6 @@ async function writeStackdriverMetricData() {
 	//
 	// This function uses the global variable "userCount" for its value
 	//
-	
-	
 	const dataPoint = {
 	  interval: {
 		endTime: {
@@ -305,7 +275,6 @@ async function writeStackdriverMetricData() {
 		doubleValue: userCount,
 	  },
 	};
-
 	const timeSeriesData = {
 	  metric: {
 		type: 'custom.googleapis.com/webapp/active_users',
@@ -325,17 +294,15 @@ async function writeStackdriverMetricData() {
 	  },
 	  points: [dataPoint],
 	};
-
 	const request = {
 	  name: client.projectPath(projectId),
 	  timeSeries: [timeSeriesData],
 	};
-
 	// Writes time series data
 	const result = await client.createTimeSeries(request);
 	console.log(`Done writing time series data.`, result);
-
 }
+
 
 // --------------------------------------------------------------------------------------
 // SECTION: Error Handling
@@ -346,15 +313,15 @@ var errorHandler = function() {
 	//TODO
 }
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log('Web server listening on port', port);
-});
-
-
 
 // --------------------------------------------------------------------------------------
 // SECTION: Code Graveyard
 // All code below this point is not called and should be disposable
 // --------------------------------------------------------------------------------------
 //
+
+// 	function displayVars() {
+// 		console.log('project id is: ' + projectId);
+// 		console.log('cluster name is: ' + cluster_name);
+// 		console.log('zone name is: ' + zone_name);
+// 	}
