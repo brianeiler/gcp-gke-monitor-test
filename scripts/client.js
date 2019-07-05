@@ -21,7 +21,7 @@ var btnEnableDebugLogging  = null;
 var btnDisableDebugLogging = null;
 var lblDebugLoggingStatus  = null;
 
-const dataFilePath = './scripts/data.json'	// TO-DO: I'm not sure if this needs to be a URL or not. Need to test it.
+// const dataFilePath = './scripts/data.json'	// Used by a commented-out function
 
 var loaded = function() {
 
