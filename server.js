@@ -5,10 +5,11 @@ const http = require('http');
 const fs = require('fs');
 const process = require('process');
 const bodyParser = require('body-parser');
+const NanoTimer = require('nanotimer');
 
 // Debug log messages enabled? (true/false)
 var debugMode = process.env.DEBUG || false;
-var dryRunMode = process.env.DRYRUN || true;
+var dryRunMode = process.env.DRYRUN || false;
 
 // --------------------------------------------------------------------------------------
 // SECTION: Initialization
@@ -33,17 +34,17 @@ var pod_name = "";
 var cpuLoadRunning = false;
 var customMetricCreated = false;
 var userCount = 0;
-JSONData.CpuIsRunning = cpuLoadRunning;
+JSONData.CpuLoadRunning = cpuLoadRunning;
 JSONData.customMetricCreated = customMetricCreated;
 JSONData.UserCount = userCount;
-JSONData.debugMode = debugMode;
+JSONData.DebugMode = debugMode;
 setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
 
 // Set the configuration using Environment variables and GCP Metadata
 getMetadata();
 pod_guid = process.env.POD_ID;
-namespace_name = process.env.NAMESPACE;
-pod_name = process.env.HOSTNAME;
+namespace_name = process.env.NAMESPACE_NAME;
+pod_name = process.env.POD_NAME;
 
 
 // --------------------------------------------------------------------------------------
@@ -58,7 +59,9 @@ const router = express.Router();
 var server = http.createServer(app);
 
 router.get('/',function(req,res){
+  res.cookie('data', JSON.stringify(JSONData));
   res.sendFile(path.join(__dirname+'/index.html'));
+  
 });
 
 // Store all client-side JS, CSS, and user-readable data files in the scripts folder.
@@ -77,7 +80,7 @@ app.use(bodyParser.json());
 //
 app.post('/StartCPU', function(req, res) {
 	cpuLoadRunning = true;
-	JSONData.CpuIsRunning = cpuLoadRunning;
+	JSONData.CpuLoadRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	cpuEventLoop();
@@ -86,7 +89,7 @@ app.post('/StartCPU', function(req, res) {
 
 app.post('/StopCPU', function(req, res) {
 	cpuLoadRunning = false;
-	JSONData.CpuIsRunning = cpuLoadRunning;
+	JSONData.CpuLoadRunning = cpuLoadRunning;
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 	res.redirect("/");
 	if (debugMode) console.log(getDateTime() + ',DEBUG, Message: CPU load stopped');
@@ -188,9 +191,10 @@ function initData() {
 	fs.writeFile(dataFilePath, JSON.stringify(JSONData, null, 2), errorHandler);
 }
 
-function sleep(ms){
+function nanoSleep(ms){
     return new Promise(resolve=>{
-        setTimeout(resolve,ms)
+		var timer = new NanoTimer();
+		timer.setTimeout(resolve,"",ms)
     })
 }
 
@@ -201,11 +205,12 @@ function startMonitoring() {
 
 async function cpuEventLoop() {
 	var answer = 0;
+	var timer = new NanoTimer();
 	if (!dryRunMode) while (cpuLoadRunning) {
-		for (var i = 0; i < 10000000; i++) {
+		for (var i = 0; i < 1000; i++) {
 			answer += Math.random() * Math.random();
 		}
-		await sleep(1);
+		await nanoSleep(100n);	// This timer accepts an integer followed by the unit: seconds (s), microseconds (u), and nanoseconds (n)
 	}
 	return answer;
 }
