@@ -34,9 +34,9 @@ var cpuLoadRunning = false;
 var customMetricCreated = false;
 var userCount = 0;
 JSONData.CpuIsRunning = cpuLoadRunning;
-JSONData.customMetricCreated = customMetricCreated;
+JSONData.CustomMetricCreated = customMetricCreated;
 JSONData.UserCount = userCount;
-JSONData.debugMode = debugMode;
+JSONData.DebugMode = debugMode;
 setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize its contents
 
 // Set the configuration using Environment variables and GCP Metadata
