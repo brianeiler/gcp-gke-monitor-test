@@ -35,9 +35,9 @@ setTimeout(initData, 2000);	// Wait for the file to be ready, then initialize it
 
 // Set the configuration using Environment variables and GCP Metadata
 getMetadata();
-const pod_guid = process.env.POD_ID;
-const namespace_name = process.env.NAMESPACE;
-const pod_name = process.env.HOSTNAME;
+pod_guid = process.env.POD_ID;
+namespace_name = process.env.NAMESPACE;
+pod_name = process.env.HOSTNAME;
 
 // Create the StackDriver Metric Descriptor (required before sending data)
 setTimeout(createStackdriverMetricDescriptor, 2000);
