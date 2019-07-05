@@ -1,6 +1,13 @@
 # gcp-gke-monitor-test
 This is a web-based test utility for Google Kubernetes Engine (GKE) and Stackdriver on Google Cloud Platform. The tool includes a CPU load generator, a custom metric generator, and an event log test.
 
+&nbsp;
+
+# Legal Disclaimer
+This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
+
+&nbsp;
+
 ## CPU Load generator
 The CPU load generator uses a math function to keep the CPU busy, then waits 1ms to allow for other system processes to respond, as well as to check if the variable "cpuLoadRunning" is true or false. When the user clicks the stop button, this variable is set to False, which prevents the math function from running.
 ```
@@ -154,6 +161,3 @@ app.post('/SendLogInformational', function(req, res) {
 });
 ```
 
-
-# Legal Disclaimer
-This test application is provided as-is without warranty or support. This tool is not intended for use in a production environment, and may cause significant system load when the CPU load generator is active. Use at your own risk.
