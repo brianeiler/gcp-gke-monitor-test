@@ -70,6 +70,17 @@
 	<span id="lblDebugLoggingStatus">Current User count</span>
   </div>
 </div>
-Version: gcp-gke-monitor-test:1.1.0
+
+<div style="margin:50px;">
+  <div class="jumbotron"  style="padding:40px;">
+	<h1>Crash the Pod</h1>
+	<p>This button will invoke a function that has an unhandled error, which causes the pod to crash and restart.</p>
+	<p>When you click the button, your browser will return an error. Wait a 30 seconds while Kubernetes spawns a replacement container, then refresh the page.</p>
+	<form action="/CrashThePod" method="POST">
+		<input type="submit" value="Crash this Pod"/>
+	</form>
+  </div>
+</div>
+Version: gcp-gke-monitor-test:1.2.0
 </body>
 </html>

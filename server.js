@@ -170,6 +170,13 @@ app.post('/DisableDebug', function(req, res) {
 	console.log(getDateTime() + ',INFO, Message: Debug Logging Disabled.');
 });
 
+app.post('/CrashThePod', function(req, res) {
+	res.redirect("/");
+	console.log(getDateTime() + ',CRITICAL, Message: You just crashed the pod.');
+	setTimeout(crashThePod,1000);
+});
+
+
 // --------------------------------------------------------------------------------------
 // SECTION: Routines
 // Everything after this section will be functions
@@ -210,9 +217,14 @@ async function cpuEventLoop() {
 		for (var i = 0; i < 1000; i++) {
 			answer += Math.random() * Math.random();
 		}
-		await nanoSleep(100n);	// This timer accepts an integer followed by the unit: seconds (s), microseconds (u), and nanoseconds (n)
+		await nanoSleep('100n');	// This timer accepts an integer followed by the unit: seconds (s), microseconds (u), and nanoseconds (n)
 	}
 	return answer;
+}
+
+async function crashThePod() {
+	// This crashes the pod on purpose. Do not allow the error handler to catch this error!
+	nanoSleep(100n);	// This causes an unhandled error because the target function expects a string value.
 }
 
 function metricExport() {
